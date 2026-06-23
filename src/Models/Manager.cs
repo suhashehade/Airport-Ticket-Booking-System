@@ -1,15 +1,13 @@
 ﻿using System;
-namespace ManagerSpace
 
+public class Manager
 {
-    public class Manager
+    public User? User;
+
+
+    public Manager(string username, string password)
     {
-        public readonly User user;
-
-
-        public Manager(string username, string password)
-        {
-            user = new User(username, password);
-        }
+        User = new User(username, password);
     }
 }
+
