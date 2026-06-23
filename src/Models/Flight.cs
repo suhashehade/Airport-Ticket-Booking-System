@@ -1,50 +1,53 @@
-public class Flight
+namespace AirportSystem.Models
 {
-    public enum FlightClass
+    public class Flight
     {
-        Economy,
-        Business,
-        FirstClass
-    }
-
-    private double _price;
-    private FlightClass _class;
-    public FlightClass Class
-    {
-        get { return _class; }
-        set
+        public enum FlightClass
         {
-            _class = value;
+            Economy,
+            Business,
+            FirstClass
+        }
 
-            switch (_class)
+        private double _price;
+        private FlightClass _class;
+        public FlightClass Class
+        {
+            get { return _class; }
+            set
             {
-                case FlightClass.Economy: _price = 100; break;
-                case FlightClass.Business: _price = 200; break;
-                case FlightClass.FirstClass: _price = 300; break;
+                _class = value;
+
+                switch (_class)
+                {
+                    case FlightClass.Economy: _price = 100; break;
+                    case FlightClass.Business: _price = 200; break;
+                    case FlightClass.FirstClass: _price = 300; break;
+                }
             }
         }
-    }
-    public double Price
-    {
-        get { return _price; }
-    }
+        public double Price
+        {
+            get { return _price; }
+        }
 
-    public string? DepartureCountry { get; set; }
-    public string? DestinationCountry { get; set; }
-    public string? DepartureDate { get; set; }
-    public string? DepartureAirport { get; set; }
-    public string? ArrivalAirport { get; set; }
+        public string? DepartureCountry { get; set; }
+        public string? DestinationCountry { get; set; }
+        public string? DepartureDate { get; set; }
+        public string? DepartureAirport { get; set; }
+        public string? ArrivalAirport { get; set; }
 
-    public Flight() { }
+        public Flight() { }
 
-    public Flight(string departureCountry, string destinationCountry, string departureDate,
-                  string departureAirport, string arrivalAirport, FlightClass flightClass)
-    {
-        DepartureCountry = departureCountry;
-        DestinationCountry = destinationCountry;
-        DepartureDate = departureDate;
-        DepartureAirport = departureAirport;
-        ArrivalAirport = arrivalAirport;
-        Class = flightClass;
+        public Flight(string departureCountry, string destinationCountry, string departureDate,
+                      string departureAirport, string arrivalAirport, FlightClass flightClass)
+        {
+            DepartureCountry = departureCountry;
+            DestinationCountry = destinationCountry;
+            DepartureDate = departureDate;
+            DepartureAirport = departureAirport;
+            ArrivalAirport = arrivalAirport;
+            Class = flightClass;
+        }
     }
 }

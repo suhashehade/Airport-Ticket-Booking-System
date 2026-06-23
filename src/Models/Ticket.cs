@@ -1,36 +1,38 @@
 
-
-class Ticket
+namespace AirportSystem.Models
 {
-    private string? _ticketId;
-    private Passenger? _passenger;
-    private Flight? _flight;
-
-    public string? TicketId
+    public class Ticket
     {
-        get { return _ticketId; }
-        set { _ticketId = value; }
-    }
+        private string? _ticketId;
+        private Passenger? _passenger;
+        private Flight? _flight;
 
-    public Passenger? Passenger
-    {
-        get { return _passenger; }
-        set { _passenger = value; }
-    }
+        public string? TicketId
+        {
+            get { return _ticketId; }
+            set { _ticketId = value; }
+        }
 
-    public Flight? Flight
-    {
-        get { return _flight; }
-        set { _flight = value; }
-    }
+        public Passenger? Passenger
+        {
+            get { return _passenger; }
+            set { _passenger = value; }
+        }
 
-    public Ticket() { }
+        public Flight? Flight
+        {
+            get { return _flight; }
+            set { _flight = value; }
+        }
+
+        public Ticket() { }
 
 
-    public Ticket(Passenger passenger, Flight flight)
-    {
-        TicketId = Guid.NewGuid().ToString();
-        Passenger = passenger;
-        Flight = flight;
+        public Ticket(Passenger passenger, Flight flight)
+        {
+            TicketId = Guid.NewGuid().ToString();
+            Passenger = passenger;
+            Flight = flight;
+        }
     }
 }

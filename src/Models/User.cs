@@ -1,14 +1,25 @@
 using System;
 
-
-public class User
+namespace AirportSystem.Models
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
-
-    public User(string username, string password)
+    public class User
     {
-        Username = username;
-        Password = password;
+
+        public enum UserRole
+        {
+            Manager,
+            Passenger
+        }
+
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public UserRole Role { get; set; }
+
+        public User(string username, string password, UserRole role)
+        {
+            Username = username;
+            Password = password;
+            Role = role;
+        }
     }
 }

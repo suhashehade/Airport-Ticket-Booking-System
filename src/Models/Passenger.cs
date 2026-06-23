@@ -1,21 +1,23 @@
 ﻿using System;
 
-public class Passenger
+namespace AirportSystem.Models
 {
-    // 1. جعل الحقل private لحمايته داخل الكلاس
-    private User? _user;
-
-    // 2. عمل Property عامة للوصول إليه بأمان (تذكري عمل كلاس User نفسه public)
-    public User? User
+    public class Passenger
     {
-        get { return _user; }
-        set { _user = value; }
-    }
+        private User? _user;
 
-    public Passenger() { }
+        public User? User
+        {
+            get { return _user; }
+            set { _user = value; }
+        }
 
-    public Passenger(string username, string password)
-    {
-        _user = new User(username, password);
+        public Passenger() { }
+
+
+        public Passenger(string username, string password)
+        {
+            _user = new User(username, password, User.UserRole.Passenger);
+        }
     }
 }

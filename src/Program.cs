@@ -1,33 +1,75 @@
 ﻿using System;
-using System.Collections.Generic;
-using AirportSystem.Data;
+using AirportSystem.Models;
+using AirportSystem.Services;
 
-Console.WriteLine("=== Testing FileContext ===");
-
-FileContext context = new();
-
-List<Flight> dummyFlights =
-        [
-            new Flight("Palestine", "Jordan", "2026-07-01", "QAIA", "AMM", Flight.FlightClass.Business),
-            new Flight("Palestine", "Egypt", "2026-08-15", "CAI", "HBE", Flight.FlightClass.Economy)
-        ];
-
-
-Console.WriteLine("Saving flights to JSON file...");
-context.SaveFlights(dummyFlights);
-Console.WriteLine("Save completed successfully!\n");
-
-
-Console.WriteLine("Loading flights from JSON file...");
-List<Flight> loadedFlights = context.LoadFlights();
-Console.WriteLine($"Loaded {loadedFlights.Count} flights from storage.\n");
-
-
-Console.WriteLine("--- Flight Details ---");
-foreach (var flight in loadedFlights)
+class Program
 {
-    Console.WriteLine($"From: {flight.DepartureCountry} To: {flight.DestinationCountry} | Class: {flight.Class} | Price: ${flight.Price}");
-}
+    static void Main(string[] args)
+    {
+        AuthService authService = new();
 
-Console.WriteLine("\nTesting finished! Press any key to exit.");
-Console.ReadKey();
+        Console.WriteLine("========================================");
+        Console.WriteLine("    Welcome to Airport Booking System   ");
+        Console.WriteLine("========================================");
+
+        Console.Write("Enter Username: ");
+        string? username = Console.ReadLine();
+
+        Console.Write("Enter Password: ");
+        string? password = Console.ReadLine();
+
+
+        User? loggedInUser = authService.Login(username!, password!);
+
+        Console.Clear();
+
+
+        if (loggedInUser != null)
+        {
+
+            switch (loggedInUser.Role)
+            {
+                case User.UserRole.Manager:
+                    ShowManagerMenu(loggedInUser.Username);
+                    break;
+
+                case User.UserRole.Passenger:
+                    ShowPassengerMenu(loggedInUser.Username);
+                    break;
+            }
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid username or password. Access Denied!");
+            Console.ResetColor();
+        }
+
+        Console.WriteLine("\nPress any key to exit...");
+        Console.ReadKey();
+    }
+
+    static void ShowManagerMenu(string name)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"Welcome Manager: [{name}]");
+        Console.ResetColor();
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("1. View Booked Tickets");
+        Console.WriteLine("2. Import Flights from CSV");
+        Console.WriteLine("3. Exit");
+        Console.Write("\nSelect an option: ");
+    }
+
+    static void ShowPassengerMenu(string name)
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"Welcome Passenger: [{name}]");
+        Console.ResetColor();
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("1. Search & Book Flights");
+        Console.WriteLine("2. Cancel Booking");
+        Console.WriteLine("3. Exit");
+        Console.Write("\nSelect an option: ");
+    }
+}
