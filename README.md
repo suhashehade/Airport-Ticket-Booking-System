@@ -63,3 +63,18 @@ Develop a .NET console application for an airport ticket booking system. This ap
 
 - Ensure the application is well-structured, readable, and maintainable.
 - Apply best practices and conventions of C# programming.
+
+
+## 🔐 Authentication & Test Credentials
+
+The system uses role-based access control (RBAC) to differentiate between the **Manager** and **Passenger** views. For testing purposes, the system is pre-seeded with the following credentials:
+
+### 👨‍💼 Manager Account
+* **Username:** `admin`
+* **Password:** `admin123`
+* *Note: The Manager has exclusive access to import flight schedules from CSV files.*
+
+### ✈️ Passenger Accounts
+* **Username:** `suha` | **Password:** `123`
+* **Username:** `raghad`  | **Password:** `123456`
+* *Note: Passengers can search for flights, book tickets, and manage their reservations.*
