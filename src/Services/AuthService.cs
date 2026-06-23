@@ -16,7 +16,7 @@ namespace AirportSystem.Services
             {
                 new User("admin", "admin123", User.UserRole.Manager),
                 new User("suha", "123", User.UserRole.Passenger),
-                new User("raghad", "12345", User.UserRole.Passenger)
+                new User("raghad", "123456", User.UserRole.Passenger)
             };
         }
 
