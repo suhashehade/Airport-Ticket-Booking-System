@@ -11,7 +11,7 @@ namespace AirportSystem.Services
 
         public AuthService()
         {
-            // تعبئة بيانات المستخدمين (Mock Data) مع تحديد الـ Role لكل واحد
+
             _users = new List<User>
             {
                 new User("admin", "admin123", User.UserRole.Manager),
@@ -22,7 +22,7 @@ namespace AirportSystem.Services
 
 
         public User? Login(string username, string password)
-        {  // البحث عن مستخدم يطابق اسم المستخدم وكلمة المرور
+        {
             User? user = _users.FirstOrDefault(u => u.Username == username && u.Password == password);
 
             return user;
