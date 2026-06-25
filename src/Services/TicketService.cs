@@ -46,6 +46,21 @@ namespace AirportSystem.Services
         }
 
 
+        public async Task<List<Ticket>> FilterTickets(List<Func<Ticket, bool>> filters)
+        {
+            List<Ticket> tickets = await _fileContext.Read<Ticket>();
+
+            var result = tickets.AsQueryable();
+
+            foreach (var filter in filters)
+            {
+                result = result.Where(filter).AsQueryable();
+            }
+
+            return [.. result];
+        }
+
+
 
     }
 }

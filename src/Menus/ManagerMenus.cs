@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using AirportSystem.Models;
 using AirportSystem.Services;
 using AirportSystem.Shared;
@@ -8,7 +9,7 @@ namespace AirportSystem.Menus
 {
     public static class ManagerMenus
     {
-        public static async Task ShowManagerMenu(FlightService flightService, User currentUser)
+        public static async Task ShowManagerMenu(FlightService flightService, TicketService ticketService, User currentUser)
         {
             bool isRunning = true;
 
@@ -24,26 +25,13 @@ namespace AirportSystem.Menus
                 {
                     case "1":
                         Logger.WaitForAnyKey();
+                        await HandleFilterTickets(ticketService);
                         Console.WriteLine("\nView Booked Tickets");
                         break;
 
                     case "2":
                         Console.Clear();
-                        Console.WriteLine("=== Import Flights from CSV ===");
-                        string filePath = Validator.ReadValidString("Please enter the full path of the CSV file: ");
-
-                        Console.WriteLine("\nProcessing file, please wait...");
-                        bool success = await flightService.ImportFlightsFromCsv(filePath);
-
-                        if (success)
-                        {
-                            Logger.PrintMessage("Flights database updated successfully!", MessageType.Info);
-                        }
-                        else
-                        {
-                            Logger.PrintMessage("Failed to import flights. Please check errors above.", MessageType.Error);
-                        }
-
+                        await HandleReadFromCSV(flightService);
                         Console.WriteLine("\nPress any key to return to main menu...");
                         Console.ReadKey();
                         break;
@@ -59,6 +47,45 @@ namespace AirportSystem.Menus
                         break;
                 }
             }
+        }
+
+        private static async Task HandleReadFromCSV(FlightService flightService)
+        {
+            Console.WriteLine("=== Import Flights from CSV ===");
+            string filePath = Validator.ReadValidString("Please enter the full path of the CSV file: ");
+
+            Console.WriteLine("\nProcessing file, please wait...");
+            bool success = await flightService.ImportFlightsFromCsv(filePath);
+
+            if (success)
+            {
+                Logger.PrintMessage("Flights database updated successfully!", MessageType.Info);
+            }
+            else
+            {
+                Logger.PrintMessage("Failed to import flights. Please check errors above.", MessageType.Error);
+            }
+
+        }
+
+
+        private static async Task HandleFilterTickets(TicketService ticketService)
+        {
+            Console.WriteLine("=== Import Flights from CSV ===");
+            string filePath = Validator.ReadValidString("Please enter the full path of the CSV file: ");
+
+            Console.WriteLine("\nProcessing file, please wait...");
+            // bool success = await flightService.ImportFlightsFromCsv(filePath);
+
+            // if (success)
+            // {
+            //     Logger.PrintMessage("Flights database updated successfully!", MessageType.Info);
+            // }
+            // else
+            // {
+            //     Logger.PrintMessage("Failed to import flights. Please check errors above.", MessageType.Error);
+            // }
+
         }
     }
 }

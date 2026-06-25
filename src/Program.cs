@@ -31,7 +31,7 @@ class Program
             switch (currentUser.Role)
             {
                 case UserRole.Manager:
-                    await ShowManagerMenu(_flightService, currentUser);
+                    await ShowManagerMenu(_flightService, _ticketService, currentUser);
                     break;
 
                 case UserRole.Passenger:
