@@ -14,7 +14,6 @@ namespace AirportSystem.Models
 
         public Passenger() { }
 
-
         public Passenger(string username, string password)
         {
             _user = new User(username, password, User.UserRole.Passenger);

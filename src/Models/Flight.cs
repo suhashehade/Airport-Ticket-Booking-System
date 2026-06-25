@@ -11,6 +11,7 @@ namespace AirportSystem.Models
 
         private double _price;
         private FlightClass _class;
+        private bool _isAvailable;
         public FlightClass Class
         {
             get { return _class; }
@@ -30,12 +31,20 @@ namespace AirportSystem.Models
         {
             get { return _price; }
         }
-
         public string? DepartureCountry { get; set; }
         public string? DestinationCountry { get; set; }
         public string? DepartureDate { get; set; }
         public string? DepartureAirport { get; set; }
         public string? ArrivalAirport { get; set; }
+        public bool IsAvailable
+        {
+            get { return _isAvailable; }
+            set
+            {
+                _isAvailable = !_isAvailable;
+            }
+
+        }
 
         public Flight() { }
 
@@ -48,6 +57,7 @@ namespace AirportSystem.Models
             DepartureAirport = departureAirport;
             ArrivalAirport = arrivalAirport;
             Class = flightClass;
+            IsAvailable = true;
         }
     }
 }

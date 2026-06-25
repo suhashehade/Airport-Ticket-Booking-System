@@ -6,16 +6,47 @@ using AirportSystem.Data;
 
 namespace AirportSystem.Services
 {
-    public class FlightService
+    public class TicketService
     {
 
         private FileContext _fileContext;
 
-        public FlightService(FileContext fileContext)
+        public List<Ticket>? Tickets;
+
+        public TicketService(FileContext fileContext)
         {
             _fileContext = fileContext;
 
         }
+
+        public async Task<bool> InsertTicket(Ticket ticket)
+        {
+            List<Ticket> existingTickets = await _fileContext.LoadTickets();
+
+            bool isDuplicate = existingTickets.Any(et =>
+                                    et.TicketId == ticket.TicketId &&
+                                    et.PassengerUsername == ticket.PassengerUsername &&
+                                     et.Flight!.DepartureCountry == ticket.Flight!.DepartureCountry &&
+                                        et.Flight!.DestinationCountry == ticket.Flight.DestinationCountry &&
+                                        et.Flight!.DepartureAirport == ticket.Flight.DepartureAirport &&
+                                        et.Flight!.ArrivalAirport == ticket.Flight.ArrivalAirport &&
+                                        et.Flight!.DepartureDate == ticket.Flight.DepartureDate &&
+                                        et.Flight!.Price == ticket.Flight.Price &&
+                                        et.Flight!.Class == ticket.Flight.Class
+
+                );
+
+            if (!isDuplicate)
+            {
+                existingTickets.Add(ticket);
+            }
+
+            _fileContext.SaveTickets(existingTickets);
+
+            Logger.PrintMessage($"Successfully processed {existingTickets.Count} tickets.", Logger.MessageType.Success);
+            return true;
+        }
+
 
 
         public async Task<bool> ImportFlightsFromCsv(string filePath)
