@@ -1,20 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using AirportSystem.Models;
 using AirportSystem.Data;
+using AirportSystem.Shared;
+using static AirportSystem.Enums.AppEnums;
+using System.Globalization;
 
 namespace AirportSystem.Services
 {
     public class FlightService
     {
 
-        private FileContext _fileContext;
+        private readonly FileContext _fileContext;
 
         public FlightService(FileContext fileContext)
         {
             _fileContext = fileContext;
-
         }
 
 
@@ -22,7 +21,7 @@ namespace AirportSystem.Services
         {
             if (!File.Exists(filePath))
             {
-                Logger.PrintMessage($"Error: File not found at path: {filePath}", Logger.MessageType.Error);
+                Logger.PrintMessage($"Error: File not found at path: {filePath}", MessageType.Error);
                 return false;
             }
 
@@ -33,11 +32,11 @@ namespace AirportSystem.Services
 
                 if (lines.Length <= 1)
                 {
-                    Logger.PrintMessage("Warning: The CSV file is empty or only contains headers.", Logger.MessageType.Warning);
+                    Logger.PrintMessage("Warning: The CSV file is empty or only contains headers.", MessageType.Warning);
                     return false;
                 }
 
-                List<Flight> existingFlights = await _fileContext.LoadFlights();
+                List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
                 for (int i = 1; i < lines.Length; i++)
                 {
@@ -50,23 +49,23 @@ namespace AirportSystem.Services
 
                     if (columns.Length < 6)
                     {
-                        Logger.PrintMessage($"Skipping invalid line {i + 1}: {line}", Logger.MessageType.Warning);
+                        Logger.PrintMessage($"Skipping invalid line {i + 1}: {line}", MessageType.Warning);
                         continue;
                     }
 
 
                     string departureCountry = columns[0].Trim();
                     string destinationCountry = columns[1].Trim();
-                    string departureDate = columns[2].Trim();
+                    DateOnly departureDate = DateOnly.ParseExact(columns[2].Trim(), Constants.DateFormat, CultureInfo.InvariantCulture);
                     string departureAirport = columns[3].Trim();
                     string arrivalAirport = columns[4].Trim();
                     string classString = columns[5].Trim();
 
 
-                    if (!Enum.TryParse(classString, true, out Flight.FlightClass flightClass))
+                    if (!Enum.TryParse(classString, true, out FlightClass flightClass))
                     {
 
-                        flightClass = Flight.FlightClass.Economy;
+                        flightClass = FlightClass.Economy;
                     }
 
 
@@ -96,14 +95,14 @@ namespace AirportSystem.Services
 
                 }
 
-                _fileContext.SaveFlights(existingFlights);
+                await _fileContext.Write(existingFlights);
 
-                Logger.PrintMessage($"Successfully processed {existingFlights.Count} flights.", Logger.MessageType.Success);
+                Logger.PrintMessage($"Successfully processed {existingFlights.Count} flights.", MessageType.Success);
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.PrintMessage($"An error occurred while reading the CSV: {ex.Message}", Logger.MessageType.Error);
+                Logger.PrintMessage($"An error occurred while reading the CSV: {ex.Message}", MessageType.Error);
                 return false;
             }
         }
@@ -111,7 +110,7 @@ namespace AirportSystem.Services
 
         public async Task<List<Flight>> DisplayAvailableFlights()
         {
-            List<Flight> existingFlights = await _fileContext.LoadFlights();
+            List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
             var flights = existingFlights
                 .Where(f => f.IsAvailable)
@@ -124,7 +123,7 @@ namespace AirportSystem.Services
 
         public async Task<List<Flight>> GetUniqueFlights()
         {
-            List<Flight> existingFlights = await _fileContext.LoadFlights();
+            List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
             var uniqueFlights = existingFlights
                 .Where(f => f.IsAvailable)
@@ -140,10 +139,10 @@ namespace AirportSystem.Services
                 string arrivalAirport,
                 string departureCountry,
                 string destinationCountry,
-                string departureDate,
-                Flight.FlightClass selectedClass)
+                DateOnly departureDate,
+                FlightClass selectedClass)
         {
-            List<Flight> existingFlights = await _fileContext.LoadFlights();
+            List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
 
             Flight? flight = existingFlights.FirstOrDefault(ef =>
@@ -158,7 +157,7 @@ namespace AirportSystem.Services
 
             if (flight == null)
             {
-                Logger.PrintMessage("No flight matched the selected criteria or class!", Logger.MessageType.Error);
+                Logger.PrintMessage("No flight matched the selected criteria or class!", MessageType.Error);
             }
 
             return flight;

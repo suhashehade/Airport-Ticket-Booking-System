@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using AirportSystem.Models;
+using static AirportSystem.Enums.AppEnums;
 
 namespace AirportSystem.Services
 {
@@ -14,9 +12,9 @@ namespace AirportSystem.Services
 
             _users = new List<User>
             {
-                new User("admin", "admin123", User.UserRole.Manager),
-                new User("suha", "123", User.UserRole.Passenger),
-                new User("raghad", "123456", User.UserRole.Passenger)
+                new User("admin", "admin123", UserRole.Manager),
+                new User("suha", "123", UserRole.Passenger),
+                new User("raghad", "123456", UserRole.Passenger)
             };
         }
 

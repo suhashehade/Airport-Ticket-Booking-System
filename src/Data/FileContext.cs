@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text.Json;
-using AirportSystem.Models;
 
 namespace AirportSystem.Data
 {
@@ -11,11 +7,9 @@ namespace AirportSystem.Data
 
         private readonly string _storageDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Storage");
 
-        private readonly string _flightsFilePath;
+        private readonly string _filePath;
 
-        private readonly string _ticketsFilePath;
-
-        public FileContext()
+        public FileContext(string fileName)
         {
 
             if (!Directory.Exists(_storageDirectory))
@@ -23,62 +17,36 @@ namespace AirportSystem.Data
                 Directory.CreateDirectory(_storageDirectory);
             }
 
-            _flightsFilePath = Path.Combine(_storageDirectory, "flights.json");
-            _ticketsFilePath = Path.Combine(_storageDirectory, "tickets.json");
+            _filePath = Path.Combine(_storageDirectory, fileName);
         }
 
 
-        public async void SaveFlights(List<Flight> flights)
+        public async Task Write<T>(List<T> flights)
         {
 
             var options = new JsonSerializerOptions { WriteIndented = true };
 
             string jsonString = JsonSerializer.Serialize(flights, options);
 
-            await File.WriteAllTextAsync(_flightsFilePath, jsonString);
+            await File.WriteAllTextAsync(_filePath, jsonString);
         }
 
 
-        public async Task<List<Flight>> LoadFlights()
+        public async Task<List<T>> Read<T>()
         {
 
-            if (!File.Exists(_flightsFilePath))
+            if (!File.Exists(_filePath))
             {
-                return new List<Flight>();
+                return new List<T>();
             }
 
-            string jsonString = await File.ReadAllTextAsync(_flightsFilePath);
+            string jsonString = await File.ReadAllTextAsync(_filePath);
 
-            List<Flight>? flights = JsonSerializer.Deserialize<List<Flight>>(jsonString);
+            List<T>? rows = JsonSerializer.Deserialize<List<T>>(jsonString);
 
-            return flights ?? new List<Flight>();
+            return rows ?? new List<T>();
         }
 
 
-        public async void SaveTickets(List<Ticket> tickets)
-        {
-
-            var options = new JsonSerializerOptions { WriteIndented = true };
-
-            string jsonString = JsonSerializer.Serialize(tickets, options);
-
-            await File.WriteAllTextAsync(_ticketsFilePath, jsonString);
-        }
-
-
-        public async Task<List<Ticket>> LoadTickets()
-        {
-
-            if (!File.Exists(_ticketsFilePath))
-            {
-                return new List<Ticket>();
-            }
-
-            string jsonString = await File.ReadAllTextAsync(_ticketsFilePath);
-
-            List<Ticket>? tickets = JsonSerializer.Deserialize<List<Ticket>>(jsonString);
-
-            return tickets ?? new List<Ticket>();
-        }
     }
 }

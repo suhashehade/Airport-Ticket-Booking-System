@@ -1,7 +1,9 @@
 
+using static AirportSystem.Enums.AppEnums;
+
 namespace AirportSystem.Shared
 {
-    class Validator
+    public static class Validator
     {
         public static string ReadValidString(string message)
         {
@@ -10,7 +12,7 @@ namespace AirportSystem.Shared
 
             while (string.IsNullOrWhiteSpace(input))
             {
-                Logger.PrintMessage("Invalid input ❌", Logger.MessageType.Error);
+                Logger.PrintMessage("Invalid input ❌", MessageType.Error);
                 input = Console.ReadLine();
             }
 
@@ -27,13 +29,13 @@ namespace AirportSystem.Shared
 
                 if (!double.TryParse(input, out double value))
                 {
-                    Logger.PrintMessage("Invalid number ❌", Logger.MessageType.Error);
+                    Logger.PrintMessage("Invalid number ❌", MessageType.Error);
                     continue;
                 }
 
                 if (value <= 0)
                 {
-                    Logger.PrintMessage("Must be > 0 ❌", Logger.MessageType.Error);
+                    Logger.PrintMessage("Must be > 0 ❌", MessageType.Error);
                     continue;
                 }
 
@@ -51,13 +53,13 @@ namespace AirportSystem.Shared
 
                 if (!int.TryParse(input, out int value))
                 {
-                    Logger.PrintMessage("Invalid number ❌", Logger.MessageType.Error);
+                    Logger.PrintMessage("Invalid number ❌", MessageType.Error);
                     continue;
                 }
 
                 if (value <= 0)
                 {
-                    Logger.PrintMessage("Must be > 0 ❌", Logger.MessageType.Error);
+                    Logger.PrintMessage("Must be > 0 ❌", MessageType.Error);
                     continue;
                 }
 

@@ -1,16 +1,9 @@
-using System;
+using static AirportSystem.Enums.AppEnums;
 
 namespace AirportSystem.Models
 {
     public class User
     {
-
-        public enum UserRole
-        {
-            Manager,
-            Passenger
-        }
-
         public string Username { get; set; }
         public string Password { get; set; }
         public UserRole Role { get; set; }

@@ -1,17 +1,14 @@
+
+using static AirportSystem.Enums.AppEnums;
+
 namespace AirportSystem.Models
 {
     public class Flight
     {
-        public enum FlightClass
-        {
-            Economy,
-            Business,
-            FirstClass
-        }
+
 
         private double _price;
         private FlightClass _class;
-        private bool _isAvailable;
         public FlightClass Class
         {
             get { return _class; }
@@ -33,22 +30,14 @@ namespace AirportSystem.Models
         }
         public string? DepartureCountry { get; set; }
         public string? DestinationCountry { get; set; }
-        public string? DepartureDate { get; set; }
+        public DateOnly? DepartureDate { get; set; }
         public string? DepartureAirport { get; set; }
         public string? ArrivalAirport { get; set; }
-        public bool IsAvailable
-        {
-            get { return _isAvailable; }
-            set
-            {
-                _isAvailable = !_isAvailable;
-            }
-
-        }
+        public bool IsAvailable { get; set; }
 
         public Flight() { }
 
-        public Flight(string departureCountry, string destinationCountry, string departureDate,
+        public Flight(string departureCountry, string destinationCountry, DateOnly departureDate,
                       string departureAirport, string arrivalAirport, FlightClass flightClass)
         {
             DepartureCountry = departureCountry;
