@@ -63,35 +63,29 @@ namespace AirportSystem.Menus
             string destinationCountry = Validator.ReadValidString("Select the Destination Country: ").Trim();
             string departureDate = Validator.ReadValidString("Select the Departure Date: ").Trim();
 
-            string classMessage = @"
-Select the Flight Class (Enter number or name): 
-[0]: FirstClass
-[1]: Business
-[2]: Economy
-Your Choice: ";
 
-            string classInput = Validator.ReadValidString(classMessage).Trim();
 
-            if (Enum.TryParse(classInput, true, out FlightClass flightClass))
+            FlightClass flightClass = Validator.ReadValidFlightClass(Constants.ClassMessage);
+
+
+            Flight? selectedFlight = await flightService.SelectAvailableFlight(
+                departureAirport, arrivalAirport, departureCountry, destinationCountry, DateTime.ParseExact(departureDate, Constants.DateFormat, CultureInfo.InvariantCulture), flightClass);
+
+            if (selectedFlight != null)
             {
-                Flight? selectedFlight = await flightService.SelectAvailableFlight(
-                    departureAirport, arrivalAirport, departureCountry, destinationCountry, DateOnly.ParseExact(departureDate, Constants.DateFormat, CultureInfo.InvariantCulture), flightClass);
+                Console.Clear();
+                Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
+                Logger.PrintFullFlightHeader();
 
-                if (selectedFlight != null)
-                {
-                    Console.Clear();
-                    Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
-                    Logger.PrintFullFlightHeader();
+                string flightRow = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
+                    selectedFlight.Class, selectedFlight.Price, selectedFlight.DepartureAirport, selectedFlight.ArrivalAirport, selectedFlight.DepartureCountry, selectedFlight.DestinationCountry, selectedFlight.DepartureDate?.ToString(Constants.DateFormat));
+                Logger.PrintMessage(flightRow, MessageType.Info);
 
-                    string flightRow = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
-                        selectedFlight.Class, selectedFlight.Price, selectedFlight.DepartureAirport, selectedFlight.ArrivalAirport, selectedFlight.DepartureCountry, selectedFlight.DestinationCountry, selectedFlight.DepartureDate?.ToString(Constants.DateFormat));
-                    Logger.PrintMessage(flightRow, MessageType.Info);
+                Ticket ticket = new Ticket(currentUser!, selectedFlight);
+                bool success = await ticketService.InsertTicket(ticket);
 
-                    Ticket ticket = new Ticket(currentUser!, selectedFlight);
-                    bool success = await ticketService.InsertTicket(ticket);
-
-                }
             }
+
             else
             {
                 Logger.PrintMessage("Invalid flight class selection!", MessageType.Error);

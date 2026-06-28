@@ -56,18 +56,15 @@ namespace AirportSystem.Services
 
                     string departureCountry = columns[0].Trim();
                     string destinationCountry = columns[1].Trim();
-                    DateOnly departureDate = DateOnly.ParseExact(columns[2].Trim(), Constants.DateFormat, CultureInfo.InvariantCulture);
+                    DateTime departureDate = DateTime.ParseExact(columns[2].Trim(), Constants.DateFormat, CultureInfo.InvariantCulture);
                     string departureAirport = columns[3].Trim();
                     string arrivalAirport = columns[4].Trim();
                     string classString = columns[5].Trim();
 
-
                     if (!Enum.TryParse(classString, true, out FlightClass flightClass))
                     {
-
                         flightClass = FlightClass.Economy;
                     }
-
 
                     Flight flight = new(
                         departureCountry,
@@ -139,7 +136,7 @@ namespace AirportSystem.Services
                 string arrivalAirport,
                 string departureCountry,
                 string destinationCountry,
-                DateOnly departureDate,
+                DateTime departureDate,
                 FlightClass selectedClass)
         {
             List<Flight> existingFlights = await _fileContext.Read<Flight>();

@@ -34,6 +34,12 @@ namespace AirportSystem.Shared
             Console.WriteLine(new string('-', 115));
         }
 
+        public static void PrintFullTicketHeader()
+        {
+            Console.WriteLine("{0,-20} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}", "Passenger name", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
+            Console.WriteLine(new string('-', 140));
+        }
+
         public static void WaitForAnyKey()
         {
             Console.WriteLine("\nPress any key to continue...");

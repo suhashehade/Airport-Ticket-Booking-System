@@ -50,14 +50,8 @@ namespace AirportSystem.Services
         {
             List<Ticket> tickets = await _fileContext.Read<Ticket>();
 
-            var result = tickets.AsQueryable();
-
-            foreach (var filter in filters)
-            {
-                result = result.Where(filter).AsQueryable();
-            }
-
-            return [.. result];
+            var result = tickets.Where(ticket => filters.All(filter => filter(ticket)));
+            return result.ToList();
         }
 
 
