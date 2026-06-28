@@ -5,29 +5,8 @@ namespace AirportSystem.Models
 {
     public class Flight
     {
-
-
-        private double _price;
-        private FlightClass _class;
-        public FlightClass Class
-        {
-            get { return _class; }
-            set
-            {
-                _class = value;
-
-                switch (_class)
-                {
-                    case FlightClass.Economy: _price = 100; break;
-                    case FlightClass.Business: _price = 200; break;
-                    case FlightClass.FirstClass: _price = 300; break;
-                }
-            }
-        }
-        public double Price
-        {
-            get { return _price; }
-        }
+        public FlightClass Class { get; set; }
+        public double Price { get; set; }
         public string? DepartureCountry { get; set; }
         public string? DestinationCountry { get; set; }
         public DateTime? DepartureDate { get; set; }
@@ -38,7 +17,7 @@ namespace AirportSystem.Models
         public Flight() { }
 
         public Flight(string departureCountry, string destinationCountry, DateTime departureDate,
-                      string departureAirport, string arrivalAirport, FlightClass flightClass)
+                      string departureAirport, string arrivalAirport, double price, FlightClass flightClass)
         {
             DepartureCountry = departureCountry;
             DestinationCountry = destinationCountry;
@@ -47,6 +26,12 @@ namespace AirportSystem.Models
             ArrivalAirport = arrivalAirport;
             Class = flightClass;
             IsAvailable = true;
+            switch (flightClass)
+            {
+                case FlightClass.Economy: Price = price; break;
+                case FlightClass.Business: Price = price * 2; break;
+                case FlightClass.FirstClass: Price = price * 3; break;
+            }
         }
     }
 }

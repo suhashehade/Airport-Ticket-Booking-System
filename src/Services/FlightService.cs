@@ -59,7 +59,8 @@ namespace AirportSystem.Services
                     DateTime departureDate = DateTime.ParseExact(columns[2].Trim(), Constants.DateFormat, CultureInfo.InvariantCulture);
                     string departureAirport = columns[3].Trim();
                     string arrivalAirport = columns[4].Trim();
-                    string classString = columns[5].Trim();
+                    double price = double.Parse(columns[5].Trim());
+                    string classString = columns[6].Trim();
 
                     if (!Enum.TryParse(classString, true, out FlightClass flightClass))
                     {
@@ -72,6 +73,7 @@ namespace AirportSystem.Services
                         departureDate,
                         departureAirport,
                         arrivalAirport,
+                        price,
                         flightClass
                     );
 
@@ -80,7 +82,7 @@ namespace AirportSystem.Services
                                         ef.DestinationCountry == flight.DestinationCountry &&
                                         ef.DepartureAirport == flight.DepartureAirport &&
                                         ef.ArrivalAirport == flight.ArrivalAirport &&
-                                        ef.DepartureDate == flight.DepartureDate &&
+                                        ef.DepartureDate?.Date == flight.DepartureDate?.Date &&
                                         ef.Price == flight.Price &&
                                         ef.Class == flight.Class
                     );
