@@ -1,10 +1,11 @@
 ﻿using AirportSystem.Models;
 using AirportSystem.Services;
 using AirportSystem.Data;
-using AirportSystem.Shared;
+using AirportSystem.Utils;
+using static AirportSystem.Validators.ConsoleValidator;
 using static AirportSystem.Enums.AppEnums;
-using static AirportSystem.Menus.ManagerMenus;
-using static AirportSystem.Menus.PassengerMenus;
+using static AirportSystem.Menus.ManagerMenu;
+using static AirportSystem.Menus.PassengerMenu;
 
 
 class Program
@@ -20,8 +21,8 @@ class Program
     {
         Logger.PrintWelcome();
 
-        string username = Validator.ReadValidString("Enter Username: ").Trim();
-        string password = Validator.ReadValidString("Enter Password: ").Trim();
+        string username = ReadValidString("Enter Username: ").Trim();
+        string password = ReadValidString("Enter Password: ").Trim();
 
         currentUser = _authService.Login(username, password);
         Console.Clear();

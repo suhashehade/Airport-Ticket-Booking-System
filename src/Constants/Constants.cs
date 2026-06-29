@@ -1,6 +1,6 @@
-namespace AirportSystem.Shared
+namespace AirportSystem.Constants
 {
-    public static class Constants
+    public static class AppConstants
     {
         public static string DateFormat = "yyyy-MM-dd";
         public static string ClassMessage = @"

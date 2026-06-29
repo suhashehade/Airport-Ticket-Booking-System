@@ -1,13 +1,14 @@
-using System.Reflection.Metadata;
 using AirportSystem.Models;
 using AirportSystem.Services;
-using AirportSystem.Shared;
+using AirportSystem.Utils;
+using AirportSystem.Validators;
 using static AirportSystem.Enums.AppEnums;
+using static AirportSystem.Constants.AppConstants;
 
 
 namespace AirportSystem.Menus
 {
-    public static class ManagerMenus
+    public static class ManagerMenu
     {
         public static async Task ShowManagerMenu(FlightService flightService, TicketService ticketService, User currentUser)
         {
@@ -19,7 +20,7 @@ namespace AirportSystem.Menus
                 Logger.PrintWelcomeUser(currentUser.Username);
                 Logger.PrintManagerMenu();
 
-                string choice = Validator.ReadValidString("Select an option: ");
+                string choice = ConsoleValidator.ReadValidString("Select an option: ");
 
                 switch (choice)
                 {
@@ -53,7 +54,7 @@ namespace AirportSystem.Menus
         private static async Task HandleReadFromCSV(FlightService flightService)
         {
             Console.WriteLine("=== Import Flights from CSV ===");
-            string filePath = Validator.ReadValidString("Please enter the full path of the CSV file: ");
+            string filePath = ConsoleValidator.ReadValidString("Please enter the full path of the CSV file: ");
 
             Console.WriteLine("\nProcessing file, please wait...");
             bool success = await flightService.ImportFlightsFromCsv(filePath);
@@ -76,14 +77,14 @@ namespace AirportSystem.Menus
 
             List<Func<Ticket, bool>> filters = new();
 
-            string? passengerName = Validator.ReadOptionalString("Please enter the passenger name: ");
-            double? price = Validator.ReadOptionalDouble("Please enter the price: ");
-            string? departureCountry = Validator.ReadOptionalString("Please enter the Departure Country: ");
-            string? destinationCountry = Validator.ReadOptionalString("Please enter the Destination Country: ");
-            DateTime? departureDate = Validator.ReadOptionalDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
-            string? departureAirport = Validator.ReadOptionalString("Please enter the Departure Airport: ");
-            string? arrivalAirport = Validator.ReadOptionalString("Please enter the Arrival Airport: ");
-            FlightClass? flightClass = Validator.ReadOptionalFlightClass(Constants.ClassMessage);
+            string? passengerName = ConsoleValidator.ReadOptionalString("Please enter the passenger name: ");
+            double? price = ConsoleValidator.ReadOptionalDouble("Please enter the price: ");
+            string? departureCountry = ConsoleValidator.ReadOptionalString("Please enter the Departure Country: ");
+            string? destinationCountry = ConsoleValidator.ReadOptionalString("Please enter the Destination Country: ");
+            DateTime? departureDate = ConsoleValidator.ReadOptionalDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
+            string? departureAirport = ConsoleValidator.ReadOptionalString("Please enter the Departure Airport: ");
+            string? arrivalAirport = ConsoleValidator.ReadOptionalString("Please enter the Arrival Airport: ");
+            FlightClass? flightClass = ConsoleValidator.ReadOptionalFlightClass(ClassMessage);
 
             if (passengerName != null) filters.Add(ticket => ticket.PassengerUsername == passengerName);
             if (arrivalAirport != null) filters.Add(ticket => ticket.Flight!.ArrivalAirport == arrivalAirport);
@@ -106,7 +107,7 @@ namespace AirportSystem.Menus
             foreach (Ticket ticket in filteredTickets)
             {
                 string row = string.Format("{0,-20} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}",
-                   ticket.PassengerUsername, ticket.Flight!.Price, ticket.Flight.Class, ticket.Flight.DepartureAirport, ticket.Flight.ArrivalAirport, ticket.Flight.DepartureCountry, ticket.Flight.DestinationCountry, ticket.Flight.DepartureDate?.ToString(Constants.DateFormat));
+                   ticket.PassengerUsername, ticket.Flight!.Price, ticket.Flight.Class, ticket.Flight.DepartureAirport, ticket.Flight.ArrivalAirport, ticket.Flight.DepartureCountry, ticket.Flight.DestinationCountry, ticket.Flight.DepartureDate?.ToString(DateFormat));
                 Logger.PrintMessage(row, MessageType.Info);
             }
 

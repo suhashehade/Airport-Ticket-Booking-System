@@ -1,7 +1,7 @@
 using static AirportSystem.Enums.AppEnums;
 
 
-namespace AirportSystem.Shared
+namespace AirportSystem.Utils
 {
     public static class Logger
     {
@@ -64,7 +64,7 @@ namespace AirportSystem.Shared
         public static void PrintManagerMenu()
         {
             Console.WriteLine("----------------------------------------");
-            Console.WriteLine("1. View Booked Tickets");
+            Console.WriteLine("1. View Filtered Booked Tickets");
             Console.WriteLine("2. Import Flights from CSV");
             Console.WriteLine("3. Logout / Exit");
             Console.WriteLine("----------------------------------------");

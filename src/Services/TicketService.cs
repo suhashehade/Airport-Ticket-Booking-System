@@ -1,6 +1,6 @@
 using AirportSystem.Models;
 using AirportSystem.Data;
-using AirportSystem.Shared;
+using AirportSystem.Utils;
 using static AirportSystem.Enums.AppEnums;
 
 namespace AirportSystem.Services
@@ -16,7 +16,7 @@ namespace AirportSystem.Services
 
         }
 
-        public async Task<bool> InsertTicket(Ticket ticket)
+        public async Task<bool> BookFlight(Ticket ticket)
         {
             List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
 

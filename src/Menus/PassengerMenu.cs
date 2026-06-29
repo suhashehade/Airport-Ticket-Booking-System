@@ -1,12 +1,14 @@
 using System.Globalization;
 using AirportSystem.Models;
 using AirportSystem.Services;
-using AirportSystem.Shared;
+using AirportSystem.Utils;
 using static AirportSystem.Enums.AppEnums;
+using static AirportSystem.Constants.AppConstants;
+using AirportSystem.Validators;
 
 namespace AirportSystem.Menus
 {
-    public static class PassengerMenus
+    public static class PassengerMenu
     {
         public static async Task ShowPassengerMenu(FlightService flightService, TicketService ticketService, User currentUser)
         {
@@ -16,7 +18,7 @@ namespace AirportSystem.Menus
                 Logger.PrintWelcomeUser(currentUser.Username);
                 Logger.PrintPassengerMenu();
 
-                string choice = Validator.ReadValidString("Select an option: ");
+                string choice = ConsoleValidator.ReadValidString("Select an option: ");
 
                 switch (choice)
                 {
@@ -52,24 +54,21 @@ namespace AirportSystem.Menus
             foreach (Flight flight in flights)
             {
                 string row = string.Format("{0,-18} {1,-15} {2,-20} {3,-20} {4,-15}",
-                    flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(Constants.DateFormat));
+                    flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
                 Logger.PrintMessage(row, MessageType.Info);
             }
             Console.WriteLine();
 
-            string departureAirport = Validator.ReadValidString("Select the Departure Airport: ").Trim();
-            string arrivalAirport = Validator.ReadValidString("Select the Arrival Airport: ").Trim();
-            string departureCountry = Validator.ReadValidString("Select the Departure Country: ").Trim();
-            string destinationCountry = Validator.ReadValidString("Select the Destination Country: ").Trim();
-            string departureDate = Validator.ReadValidString("Select the Departure Date: ").Trim();
-
-
-
-            FlightClass flightClass = Validator.ReadValidFlightClass(Constants.ClassMessage);
+            string departureAirport = ConsoleValidator.ReadValidString("Select the Departure Airport: ").Trim();
+            string arrivalAirport = ConsoleValidator.ReadValidString("Select the Arrival Airport: ").Trim();
+            string departureCountry = ConsoleValidator.ReadValidString("Select the Departure Country: ").Trim();
+            string destinationCountry = ConsoleValidator.ReadValidString("Select the Destination Country: ").Trim();
+            DateTime departureDate = ConsoleValidator.ReadValidDate("Select the Departure Date: ");
+            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
 
 
             Flight? selectedFlight = await flightService.SelectAvailableFlight(
-                departureAirport, arrivalAirport, departureCountry, destinationCountry, DateTime.ParseExact(departureDate, Constants.DateFormat, CultureInfo.InvariantCulture), flightClass);
+                departureAirport, arrivalAirport, departureCountry, destinationCountry, departureDate, flightClass);
 
             if (selectedFlight != null)
             {
@@ -78,17 +77,12 @@ namespace AirportSystem.Menus
                 Logger.PrintFullFlightHeader();
 
                 string flightRow = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
-                    selectedFlight.Class, selectedFlight.Price, selectedFlight.DepartureAirport, selectedFlight.ArrivalAirport, selectedFlight.DepartureCountry, selectedFlight.DestinationCountry, selectedFlight.DepartureDate?.ToString(Constants.DateFormat));
+                    selectedFlight.Class, selectedFlight.Price, selectedFlight.DepartureAirport, selectedFlight.ArrivalAirport, selectedFlight.DepartureCountry, selectedFlight.DestinationCountry, selectedFlight.DepartureDate?.ToString(DateFormat));
                 Logger.PrintMessage(flightRow, MessageType.Info);
 
                 Ticket ticket = new Ticket(currentUser!, selectedFlight);
-                bool success = await ticketService.InsertTicket(ticket);
+                bool success = await ticketService.BookFlight(ticket);
 
-            }
-
-            else
-            {
-                Logger.PrintMessage("Invalid flight class selection!", MessageType.Error);
             }
 
             Logger.WaitForAnyKey();
@@ -104,7 +98,7 @@ namespace AirportSystem.Menus
             foreach (Flight flight in availableFlights)
             {
                 string row = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
-                   flight.Class, flight.Price, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(Constants.DateFormat));
+                   flight.Class, flight.Price, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
                 Logger.PrintMessage(row, MessageType.Info);
             }
 

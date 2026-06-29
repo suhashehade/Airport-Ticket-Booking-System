@@ -1,7 +1,9 @@
 using AirportSystem.Models;
 using AirportSystem.Data;
-using AirportSystem.Shared;
+using AirportSystem.Utils;
 using static AirportSystem.Enums.AppEnums;
+using static AirportSystem.Constants.AppConstants;
+using AirportSystem.Validators;
 using System.Globalization;
 
 namespace AirportSystem.Services
@@ -38,6 +40,7 @@ namespace AirportSystem.Services
 
                 List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
+
                 for (int i = 1; i < lines.Length; i++)
                 {
                     string line = lines[i];
@@ -47,20 +50,31 @@ namespace AirportSystem.Services
 
                     string[] columns = line.Split(',');
 
-                    if (columns.Length < 6)
+                    List<string> lineErrors =
+                    [
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(0) ?? "", "Departure Country", 0, i + 1),
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(1) ?? "", "Destination Country", 1, i + 1),
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(2) ?? "", "Departure Date", 2, i + 1),
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(3) ?? "", "Departure Airport", 3, i + 1),
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(4) ?? "", "Arrival Airport", 4, i + 1),
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(5) ?? "", "Price", 5, i + 1),
+                        .. CsvValidator.ValidateFlight(columns.ElementAtOrDefault(6) ?? "", "Class", 6, i + 1),
+                    ];
+
+
+                    if (lineErrors.Count > 0)
                     {
-                        Logger.PrintMessage($"Skipping invalid line {i + 1}: {line}", MessageType.Warning);
+                        lineErrors.ForEach(e => Logger.PrintMessage(e, MessageType.Error));
                         continue;
                     }
-
-
                     string departureCountry = columns[0].Trim();
                     string destinationCountry = columns[1].Trim();
-                    DateTime departureDate = DateTime.ParseExact(columns[2].Trim(), Constants.DateFormat, CultureInfo.InvariantCulture);
+                    DateTime departureDate = DateTime.ParseExact(columns[2].Trim(), DateFormat, CultureInfo.InvariantCulture);
                     string departureAirport = columns[3].Trim();
                     string arrivalAirport = columns[4].Trim();
                     double price = double.Parse(columns[5].Trim());
                     string classString = columns[6].Trim();
+
 
                     if (!Enum.TryParse(classString, true, out FlightClass flightClass))
                     {
