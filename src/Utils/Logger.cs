@@ -74,8 +74,8 @@ namespace AirportSystem.Utils
         public static void PrintPassengerMenu()
         {
             Console.WriteLine("----------------------------------------");
-            Console.WriteLine("1. Search & Book Flights");
-            Console.WriteLine("2. Display Available Flights");
+            Console.WriteLine("1. Select & Book Flight");
+            Console.WriteLine("2. Search Available Flights");
             Console.WriteLine("3. Exit");
             Console.WriteLine("----------------------------------------");
         }

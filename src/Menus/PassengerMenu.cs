@@ -24,10 +24,12 @@ namespace AirportSystem.Menus
                 {
                     case "1":
                         await HandleBookFlight(flightService, currentUser, ticketService);
+                        Logger.WaitForAnyKey();
                         break;
 
                     case "2":
-                        await HandleDisplayFlights(flightService);
+                        await HandleSearchAvailableFlights(flightService);
+                        Logger.WaitForAnyKey();
                         break;
 
                     case "3":
@@ -85,24 +87,48 @@ namespace AirportSystem.Menus
 
             }
 
-            Logger.WaitForAnyKey();
+
         }
 
-        private static async Task HandleDisplayFlights(FlightService flightService)
+        private static async Task HandleSearchAvailableFlights(FlightService filghtService)
         {
-            Console.Clear();
-            List<Flight> availableFlights = await flightService.DisplayAvailableFlights();
+            Console.WriteLine("=== Search Available Flights ===");
+
+            List<Func<Flight, bool>> keys = new();
+
+            double? price = ConsoleValidator.ReadOptionalDouble("Please enter the price: ");
+            string? departureCountry = ConsoleValidator.ReadOptionalString("Please enter the Departure Country: ");
+            string? destinationCountry = ConsoleValidator.ReadOptionalString("Please enter the Destination Country: ");
+            DateTime? departureDate = ConsoleValidator.ReadOptionalDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
+            string? departureAirport = ConsoleValidator.ReadOptionalString("Please enter the Departure Airport: ");
+            string? arrivalAirport = ConsoleValidator.ReadOptionalString("Please enter the Arrival Airport: ");
+            FlightClass? flightClass = ConsoleValidator.ReadOptionalFlightClass(ClassMessage);
+
+            if (arrivalAirport != null) keys.Add(flight => flight.ArrivalAirport == arrivalAirport);
+            if (departureAirport != null) keys.Add(flight => flight.DepartureAirport == departureAirport);
+            if (departureCountry != null) keys.Add(flight => flight.DepartureCountry == departureCountry);
+            if (destinationCountry != null) keys.Add(flight => flight.DestinationCountry == destinationCountry);
+            if (flightClass != null) keys.Add(flight => flight.Class == flightClass);
+            if (price != null) keys.Add(flight => Math.Abs(flight.Price - price.Value) < 0.01);
 
             Logger.PrintFullFlightHeader();
 
-            foreach (Flight flight in availableFlights)
+            List<Flight> Flight = await filghtService.SearchAvailableFlights(keys);
+
+            if (Flight.Count == 0)
+            {
+                Logger.PrintMessage("No ticket is matched", MessageType.Error);
+                return;
+            }
+
+            foreach (Flight flight in Flight)
             {
                 string row = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
-                   flight.Class, flight.Price, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
+                  flight.Class, flight.Price, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
                 Logger.PrintMessage(row, MessageType.Info);
             }
 
-            Logger.WaitForAnyKey();
         }
+
     }
 }

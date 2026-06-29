@@ -176,5 +176,15 @@ namespace AirportSystem.Services
             return flight;
         }
 
+
+        public async Task<List<Flight>> SearchAvailableFlights(List<Func<Flight, bool>> filters)
+        {
+            List<Flight> flights = await _fileContext.Read<Flight>();
+
+            var result = flights.Where(ticket => filters.All(filter => filter(ticket)));
+            return result.ToList();
+        }
+
+
     }
 }
