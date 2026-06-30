@@ -1,4 +1,6 @@
+using AirportSystem.Models;
 using static AirportSystem.Enums.AppEnums;
+using static AirportSystem.Constants.AppConstants;
 
 
 namespace AirportSystem.Utils
@@ -38,6 +40,38 @@ namespace AirportSystem.Utils
         {
             Console.WriteLine("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}", "#", "Passenger name", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
             Console.WriteLine(new string('-', 140));
+        }
+
+        public static void PrintAllTickets(List<Ticket> tickets)
+        {
+            Console.WriteLine();
+            Console.WriteLine("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}", "#", "Passenger name", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
+            Console.WriteLine(new string('-', 150));
+            int index = 0;
+            foreach (Ticket t in tickets.ToList())
+            {
+                index++;
+                string row = string.Format("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}",
+                   index, t.PassengerUsername, t.Flight!.Price, t.Flight.Class, t.Flight.DepartureAirport, t.Flight.ArrivalAirport, t.Flight.DepartureCountry, t.Flight.DestinationCountry, t.Flight.DepartureDate?.ToString(DateFormat));
+                Logger.PrintMessage(row, MessageType.Info);
+            }
+
+        }
+
+        public static void PrintUserTickets(List<Ticket> tickets)
+        {
+            Console.WriteLine();
+            Console.WriteLine("{0,-10} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}", "#", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
+            Console.WriteLine(new string('-', 130));
+            int index = 0;
+            foreach (Ticket t in tickets.ToList())
+            {
+                index++;
+                string row = string.Format("{0,-10} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}",
+                   index, t.Flight!.Price, t.Flight.Class, t.Flight.DepartureAirport, t.Flight.ArrivalAirport, t.Flight.DepartureCountry, t.Flight.DestinationCountry, t.Flight.DepartureDate?.ToString(DateFormat));
+                Logger.PrintMessage(row, MessageType.Info);
+            }
+
         }
 
         public static void WaitForAnyKey()

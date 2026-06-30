@@ -160,6 +160,7 @@ namespace AirportSystem.Menus
 
                 case "3":
                     // TODO: View personal bookings here
+                    await HandleViewUserBooking(ticketService, currentUser);
                     Logger.WaitForAnyKey();
                     break;
 
@@ -176,14 +177,8 @@ namespace AirportSystem.Menus
             Console.WriteLine("===  Cancel Booking ===");
 
             List<Ticket> tickets = await ticketService.ViewBookingsByUser(currentUser.Username);
-            int rowNumber = 0;
-            foreach (Ticket t in tickets.ToList())
-            {
-                rowNumber++;
-                string row = string.Format("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}",
-                   rowNumber, t.PassengerUsername, t.Flight!.Price, t.Flight.Class, t.Flight.DepartureAirport, t.Flight.ArrivalAirport, t.Flight.DepartureCountry, t.Flight.DestinationCountry, t.Flight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(row, MessageType.Info);
-            }
+
+            Logger.PrintUserTickets(tickets);
 
 
             int index = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", tickets.Count);
@@ -199,6 +194,24 @@ namespace AirportSystem.Menus
             return;
 
         }
+
+        private static async Task HandleViewUserBooking(TicketService ticketService, User currentUser)
+        {
+            Console.WriteLine($"===  View all bookings for the user [{currentUser.Username}] ===");
+
+
+            List<Ticket> tickets = await ticketService.ViewBookingsByUser(currentUser.Username);
+
+
+            if (tickets.Count == 0)
+            {
+                Logger.PrintMessage("No bookings to view", MessageType.Error);
+                return;
+            }
+            Logger.PrintUserTickets(tickets);
+
+        }
+
 
 
         private static Flight ReadRequiredValues()
@@ -234,7 +247,6 @@ namespace AirportSystem.Menus
             return flight;
 
         }
-
 
 
     }

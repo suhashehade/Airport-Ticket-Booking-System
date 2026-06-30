@@ -94,7 +94,7 @@ namespace AirportSystem.Menus
             if (flightClass != null) filters.Add(ticket => ticket.Flight!.Class == flightClass);
             if (price != null) filters.Add(ticket => Math.Abs(ticket.Flight!.Price - price.Value) < 0.01);
 
-            Logger.PrintFullTicketHeader();
+
 
             List<Ticket> filteredTickets = await ticketService.FilterBooking(filters);
 
@@ -104,12 +104,7 @@ namespace AirportSystem.Menus
                 return;
             }
 
-            foreach (Ticket ticket in filteredTickets)
-            {
-                string row = string.Format("{0,-20} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}",
-                   ticket.PassengerUsername, ticket.Flight!.Price, ticket.Flight.Class, ticket.Flight.DepartureAirport, ticket.Flight.ArrivalAirport, ticket.Flight.DepartureCountry, ticket.Flight.DestinationCountry, ticket.Flight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(row, MessageType.Info);
-            }
+            Logger.PrintAllTickets(filteredTickets);
 
         }
     }
