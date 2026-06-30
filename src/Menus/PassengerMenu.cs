@@ -5,6 +5,7 @@ using AirportSystem.Utils;
 using static AirportSystem.Enums.AppEnums;
 using static AirportSystem.Constants.AppConstants;
 using AirportSystem.Validators;
+using System.Text.Json;
 
 namespace AirportSystem.Menus
 {
@@ -57,31 +58,29 @@ namespace AirportSystem.Menus
             Logger.PrintUniqueFlights(flights);
             Console.WriteLine();
 
-            string departureAirport = ConsoleValidator.ReadValidString("Select the Departure Airport: ").Trim();
-            string arrivalAirport = ConsoleValidator.ReadValidString("Select the Arrival Airport: ").Trim();
-            string departureCountry = ConsoleValidator.ReadValidString("Select the Departure Country: ").Trim();
-            string destinationCountry = ConsoleValidator.ReadValidString("Select the Destination Country: ").Trim();
-            DateTime departureDate = ConsoleValidator.ReadValidDate("Select the Departure Date: ");
+            int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
             FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
 
-            Flight? selectedFlight = await flightService.SelectAvailableFlight(
-                departureAirport, arrivalAirport, departureCountry, destinationCountry, departureDate, flightClass);
+
+            Flight? selectedFlight = await flightService.SelectAvailableFlight(flightIndex, flightClass);
 
             if (selectedFlight != null)
             {
+                var options = new JsonSerializerOptions { WriteIndented = true };
                 Console.Clear();
-                Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
+                Console.WriteLine($"This is the selected flight: {JsonSerializer.Serialize(selectedFlight, options)} at index: {flightIndex}");
+                // Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
 
-                Logger.PrintAllFlights([selectedFlight]);
+                // Logger.PrintAllFlights([selectedFlight]);
 
-                Ticket ticket = new Ticket(currentUser!, selectedFlight);
-                bool success = await ticketService.BookFlight(ticket);
-                if (success)
-                {
-                    Logger.PrintMessage($"Successfully processed tickets.", MessageType.Success);
-                    return;
-                }
-                Logger.PrintMessage("This ticket already exists!", MessageType.Warning);
+                // Ticket ticket = new(currentUser!, selectedFlight);
+                // bool success = await ticketService.BookFlight(ticket);
+                // if (success)
+                // {
+                //     Logger.PrintMessage($"Successfully processed tickets.", MessageType.Success);
+                //     return;
+                // }
+                // Logger.PrintMessage("This ticket already exists!", MessageType.Warning);
 
             }
             else
@@ -195,22 +194,13 @@ namespace AirportSystem.Menus
 
             List<Flight> flights = await flightService.GetUniqueFlights();
 
-            Logger.PrintMessage("Please select one of these flights to change your booking", MessageType.Info);
+            Logger.PrintMessage("Please select one of these flights to change your booking", MessageType.Default);
             Logger.PrintUniqueFlights(flights);
 
+            int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
+            FlightClass? flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
 
-            // int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
-
-
-            string? departureCountry = ConsoleValidator.ReadOptionalString("Please enter the Departure Country: ");
-            string? destinationCountry = ConsoleValidator.ReadOptionalString("Please enter the Destination Country: ");
-            DateTime? departureDate = ConsoleValidator.ReadOptionalDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
-            string? departureAirport = ConsoleValidator.ReadOptionalString("Please enter the Departure Airport: ");
-            string? arrivalAirport = ConsoleValidator.ReadOptionalString("Please enter the Arrival Airport: ");
-            FlightClass? flightClass = ConsoleValidator.ReadOptionalFlightClass(ClassMessage);
-
-            Flight? selectedFlight = await flightService.SelectAvailableFlight(
-                           departureAirport, arrivalAirport, departureCountry, destinationCountry, departureDate, flightClass);
+            Flight? selectedFlight = await flightService.SelectAvailableFlight(flightIndex, flightClass);
 
             if (selectedFlight != null)
             {
@@ -220,12 +210,7 @@ namespace AirportSystem.Menus
                 Logger.PrintAllFlights([selectedFlight]);
 
                 bool success = await ticketService.ModifyTicket(ticketIndex,
-                             departureCountry,
-                             destinationCountry,
-                             departureDate,
-                             departureAirport,
-                             arrivalAirport,
-                             flightClass,
+                             selectedFlight,
                              currentUser.Username);
                 if (!success)
                 {

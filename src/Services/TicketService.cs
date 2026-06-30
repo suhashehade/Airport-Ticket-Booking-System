@@ -93,13 +93,7 @@ namespace AirportSystem.Services
 
         }
 
-        public async Task<bool> ModifyTicket(int index, string? departureCountry, string? destinationCountry,
-                DateTime? departureDate,
-                string? departureAirport,
-                string? arrivalAirport,
-                FlightClass? flightClass,
-                string username
-            )
+        public async Task<bool> ModifyTicket(int index, Flight flight, string username)
         {
             List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
 
@@ -110,13 +104,8 @@ namespace AirportSystem.Services
                 Ticket? ticketToModify = existingTickets.FirstOrDefault(et => et.TicketId == oldTicket?.TicketId);
                 if (ticketToModify?.Flight != null)
                 {
-                    if (departureCountry != null) ticketToModify?.Flight?.DepartureCountry = departureCountry;
-                    if (destinationCountry != null) ticketToModify?.Flight?.DestinationCountry = destinationCountry;
-                    if (departureDate != null) ticketToModify?.Flight?.DepartureDate = departureDate;
-                    if (departureAirport != null) ticketToModify?.Flight?.DepartureAirport = departureAirport;
-                    if (arrivalAirport != null) ticketToModify?.Flight?.ArrivalAirport = arrivalAirport;
-                    if (flightClass != null) ticketToModify?.Flight?.Class = flightClass;
-
+                    ticketToModify?.Flight?.Class = flight.Class;
+                    ticketToModify?.Flight?.Price = flight.Price;
                     await _fileContext.Write(existingTickets);
                     return true;
                 }

@@ -147,34 +147,12 @@ namespace AirportSystem.Services
             return uniqueFlights;
         }
 
-        public async Task<Flight?> SelectAvailableFlight(
-                string? departureAirport,
-                string? arrivalAirport,
-                string? departureCountry,
-                string? destinationCountry,
-                DateTime? departureDate,
-                FlightClass? selectedClass)
+
+        public async Task<Flight?> SelectAvailableFlight(int index, FlightClass? flightClass)
         {
-            List<Flight> existingFlights = await _fileContext.Read<Flight>();
-
-
-            Flight? flight = existingFlights.FirstOrDefault(ef =>
-                ef.DepartureCountry == departureCountry &&
-                ef.DestinationCountry == destinationCountry &&
-                ef.DepartureDate == departureDate &&
-                ef.ArrivalAirport == arrivalAirport &&
-                ef.DepartureAirport == departureAirport &&
-                ef.Class == selectedClass &&
-                ef.IsAvailable
-            );
-
-            if (flight == null)
-            {
-                return null;
-
-            }
-
-            return flight;
+            List<Flight> uniqueFlights = await GetUniqueFlights();
+            var filtered = uniqueFlights.Where(f => f.Class == flightClass).ToList();
+            return filtered.ElementAt(index - 1);
         }
 
 
