@@ -5,6 +5,7 @@ using static AirportSystem.Enums.AppEnums;
 using static AirportSystem.Constants.AppConstants;
 using AirportSystem.Validators;
 using System.Globalization;
+using System.Text.Json;
 
 namespace AirportSystem.Services
 {
@@ -120,20 +121,6 @@ namespace AirportSystem.Services
             }
         }
 
-
-        public async Task<List<Flight>> DisplayAvailableFlights()
-        {
-            List<Flight> existingFlights = await _fileContext.Read<Flight>();
-
-            var flights = existingFlights
-                .Where(f => f.IsAvailable)
-                .GroupBy(f => new { f.DepartureCountry, f.DestinationCountry, f.DepartureDate })
-                .Select(g => g.First())
-                .ToList();
-
-            return flights;
-        }
-
         public async Task<List<Flight>> GetUniqueFlights()
         {
             List<Flight> existingFlights = await _fileContext.Read<Flight>();
@@ -146,12 +133,29 @@ namespace AirportSystem.Services
 
             return uniqueFlights;
         }
+        public async Task<List<Flight>> GetByIndex(int index)
+        {
+            List<Flight> existingFlights = await GetUniqueFlights();
+
+            var uniqueFlights = existingFlights
+                .Where(f => f.IsAvailable)
+                .GroupBy(f => new { f.DepartureCountry, f.DestinationCountry, f.DepartureDate, f.ArrivalAirport, f.DepartureAirport })
+                .Select(g => g.First())
+                .ToList();
+
+            return uniqueFlights;
+        }
+
 
 
         public async Task<Flight?> SelectAvailableFlight(int index, FlightClass? flightClass)
         {
             List<Flight> uniqueFlights = await GetUniqueFlights();
+            // Flight flight =
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            Console.WriteLine($"This is the flights: {JsonSerializer.Serialize(uniqueFlights, options)}");
             var filtered = uniqueFlights.Where(f => f.Class == flightClass).ToList();
+            Console.WriteLine($"This is the flights filtered by class: {JsonSerializer.Serialize(filtered, options)}");
             return filtered.ElementAt(index - 1);
         }
 

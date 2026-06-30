@@ -66,9 +66,10 @@ namespace AirportSystem.Menus
 
             if (selectedFlight != null)
             {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                Console.Clear();
-                Console.WriteLine($"This is the selected flight: {JsonSerializer.Serialize(selectedFlight, options)} at index: {flightIndex}");
+                // var options = new JsonSerializerOptions { WriteIndented = true };
+                // Console.Clear();
+                // Console.WriteLine($"This is the selected flight: {JsonSerializer.Serialize(selectedFlight, options)} at index: {flightIndex}");
+
                 // Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
 
                 // Logger.PrintAllFlights([selectedFlight]);
