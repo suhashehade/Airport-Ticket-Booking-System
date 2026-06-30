@@ -32,15 +32,71 @@ namespace AirportSystem.Validators
             {
                 string? input = Console.ReadLine();
 
-                if (IsEmpty(input) || !IsValidDouble(input))
+                if (IsEmpty(input))
                 {
-                    Logger.PrintMessage("Invalid number, must be a number > 0 ❌", MessageType.Error);
+                    Logger.PrintMessage("Invalid number ❌", MessageType.Error);
+                    continue;
+                }
+
+                if (!IsValidDouble(input))
+                {
+                    Logger.PrintMessage("Must be a number > 0.0 ❌", MessageType.Error);
                     continue;
                 }
                 double value = double.Parse(input!);
                 return value;
             }
         }
+
+        public static int ReadValidInt(string message)
+        {
+            Console.Write(message);
+
+            while (true)
+            {
+                string? input = Console.ReadLine();
+
+                if (IsEmpty(input))
+                {
+                    Logger.PrintMessage("Invalid number ❌", MessageType.Error);
+                    continue;
+                }
+
+                if (!IsValidInt(input))
+                {
+                    Logger.PrintMessage("Must be a number > 0 ❌", MessageType.Error);
+                    continue;
+                }
+                int value = int.Parse(input!);
+                return value;
+            }
+        }
+
+        public static int ReadValidIntRange(string message, int celling)
+        {
+            Console.Write(message);
+
+            while (true)
+            {
+                string? input = Console.ReadLine();
+
+                if (IsEmpty(input))
+                {
+                    Logger.PrintMessage($"Invalid number ❌", MessageType.Error);
+                    continue;
+
+                }
+                if (!IsValidIntRange(input, celling))
+                {
+                    Logger.PrintMessage($"Out of range ❌", MessageType.Error);
+                    continue;
+                }
+                int value = int.Parse(input!);
+                return value;
+            }
+        }
+
+
 
         public static FlightClass ReadValidFlightClass(string message)
         {
@@ -72,9 +128,15 @@ namespace AirportSystem.Validators
             {
                 string? input = Console.ReadLine();
 
-                if (IsEmpty(input) || !IsValidDate(input!))
+                if (IsEmpty(input))
                 {
-                    Logger.PrintMessage("Invalid date, shouldn't be a date earlier than now ❌", MessageType.Error);
+                    Logger.PrintMessage("Invalid date ❌", MessageType.Error);
+                    continue;
+                }
+
+                if (!IsValidDate(input!))
+                {
+                    Logger.PrintMessage($"Shouldn't be a date earlier than now {DateTime.Now} ❌", MessageType.Error);
                     continue;
                 }
 

@@ -28,6 +28,26 @@ namespace AirportSystem.Validators
             return true;
         }
 
+        public static bool IsValidInt(string? prop)
+        {
+            if (!int.TryParse(prop, out int value) || value <= 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool IsValidIntRange(string? prop, int celling)
+        {
+            if (!int.TryParse(prop, out int value) || value <= 1 || value > celling)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool IsValidDate(string prop)
 
         {

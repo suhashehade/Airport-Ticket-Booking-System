@@ -17,7 +17,7 @@ namespace AirportSystem.Menus
             while (isRunning)
             {
 
-                Logger.PrintWelcomeUser(currentUser.Username);
+                Logger.PrintWelcomeUser(currentUser.Username, currentUser.Role);
                 Logger.PrintManagerMenu();
 
                 string choice = ConsoleValidator.ReadValidString("Select an option: ");
@@ -96,7 +96,7 @@ namespace AirportSystem.Menus
 
             Logger.PrintFullTicketHeader();
 
-            List<Ticket> filteredTickets = await ticketService.FilterTickets(filters);
+            List<Ticket> filteredTickets = await ticketService.FilterBooking(filters);
 
             if (filteredTickets.Count == 0)
             {

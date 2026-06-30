@@ -36,7 +36,7 @@ namespace AirportSystem.Utils
 
         public static void PrintFullTicketHeader()
         {
-            Console.WriteLine("{0,-20} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}", "Passenger name", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
+            Console.WriteLine("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}", "#", "Passenger name", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
             Console.WriteLine(new string('-', 140));
         }
 
@@ -53,11 +53,11 @@ namespace AirportSystem.Utils
             Console.WriteLine("    Welcome to Airport Booking System   ");
             Console.WriteLine("========================================");
         }
-        public static void PrintWelcomeUser(string name)
+        public static void PrintWelcomeUser(string name, UserRole role)
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Welcome Manager: [{name}]");
+            Console.WriteLine($"Welcome {role}: {name}");
             Console.ResetColor();
         }
 
@@ -76,7 +76,18 @@ namespace AirportSystem.Utils
             Console.WriteLine("----------------------------------------");
             Console.WriteLine("1. Select & Book Flight");
             Console.WriteLine("2. Search Available Flights");
-            Console.WriteLine("3. Exit");
+            Console.WriteLine("3. Manage Bookings");
+            Console.WriteLine("4. Exit");
+            Console.WriteLine("----------------------------------------");
+        }
+
+        public static void PrintManageFlightMenu()
+        {
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("1. Cancel Booking");
+            Console.WriteLine("2. Modify Booking");
+            Console.WriteLine("3. View Personal Bookings");
+            Console.WriteLine("4. Exit");
             Console.WriteLine("----------------------------------------");
         }
     }
