@@ -148,12 +148,12 @@ namespace AirportSystem.Services
         }
 
         public async Task<Flight?> SelectAvailableFlight(
-                string departureAirport,
-                string arrivalAirport,
-                string departureCountry,
-                string destinationCountry,
-                DateTime departureDate,
-                FlightClass selectedClass)
+                string? departureAirport,
+                string? arrivalAirport,
+                string? departureCountry,
+                string? destinationCountry,
+                DateTime? departureDate,
+                FlightClass? selectedClass)
         {
             List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
@@ -170,7 +170,8 @@ namespace AirportSystem.Services
 
             if (flight == null)
             {
-                Logger.PrintMessage("No flight matched the selected criteria or class!", MessageType.Error);
+                return null;
+
             }
 
             return flight;

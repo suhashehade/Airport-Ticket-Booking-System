@@ -40,7 +40,7 @@ namespace AirportSystem.Validators
 
         public static bool IsValidIntRange(string? prop, int celling)
         {
-            if (!int.TryParse(prop, out int value) || value <= 1 || value > celling)
+            if (!int.TryParse(prop, out int value) || value < 1 || value > celling)
             {
                 return false;
             }

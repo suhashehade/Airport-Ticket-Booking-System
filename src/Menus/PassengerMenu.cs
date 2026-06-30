@@ -33,7 +33,7 @@ namespace AirportSystem.Menus
                         break;
 
                     case "3":
-                        await HandleManageBookFlight(ticketService, currentUser);
+                        await HandleManageBookFlight(ticketService, flightService, currentUser);
                         Logger.WaitForAnyKey();
                         break;
                     case "4":
@@ -54,14 +54,7 @@ namespace AirportSystem.Menus
             List<Flight> flights = await flightService.GetUniqueFlights();
 
             Logger.PrintMessage("Please select one of these flights", MessageType.Info);
-            Logger.PrintUniqueFlightsHeader();
-
-            foreach (Flight flight in flights)
-            {
-                string row = string.Format("{0,-18} {1,-15} {2,-20} {3,-20} {4,-15}",
-                    flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(row, MessageType.Info);
-            }
+            Logger.PrintUniqueFlights(flights);
             Console.WriteLine();
 
             string departureAirport = ConsoleValidator.ReadValidString("Select the Departure Airport: ").Trim();
@@ -78,11 +71,8 @@ namespace AirportSystem.Menus
             {
                 Console.Clear();
                 Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
-                Logger.PrintFullFlightHeader();
 
-                string flightRow = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
-                    selectedFlight.Class, selectedFlight.Price, selectedFlight.DepartureAirport, selectedFlight.ArrivalAirport, selectedFlight.DepartureCountry, selectedFlight.DestinationCountry, selectedFlight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(flightRow, MessageType.Info);
+                Logger.PrintAllFlights([selectedFlight]);
 
                 Ticket ticket = new Ticket(currentUser!, selectedFlight);
                 bool success = await ticketService.BookFlight(ticket);
@@ -93,6 +83,10 @@ namespace AirportSystem.Menus
                 }
                 Logger.PrintMessage("This ticket already exists!", MessageType.Warning);
 
+            }
+            else
+            {
+                Logger.PrintMessage("No flight matched the selected criteria or class!", MessageType.Error);
             }
 
 
@@ -117,9 +111,9 @@ namespace AirportSystem.Menus
             if (departureCountry != null) keys.Add(flight => flight.DepartureCountry == departureCountry);
             if (destinationCountry != null) keys.Add(flight => flight.DestinationCountry == destinationCountry);
             if (flightClass != null) keys.Add(flight => flight.Class == flightClass);
-            if (price != null) keys.Add(flight => Math.Abs(flight.Price - price.Value) < 0.01);
+            if (price != null) keys.Add(flight => flight.Price == price);
 
-            Logger.PrintFullFlightHeader();
+
 
             List<Flight> flights = await filghtService.SearchAvailableFlights(keys);
 
@@ -128,17 +122,12 @@ namespace AirportSystem.Menus
                 Logger.PrintMessage("No ticket is matched", MessageType.Error);
                 return;
             }
+            Logger.PrintAllFlights(flights);
 
-            foreach (Flight flight in flights)
-            {
-                string row = string.Format("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}",
-                  flight.Class, flight.Price, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(row, MessageType.Info);
-            }
 
         }
 
-        private static async Task HandleManageBookFlight(TicketService ticketService, User currentUser)
+        private static async Task HandleManageBookFlight(TicketService ticketService, FlightService flightService, User currentUser)
         {
             Console.Clear();
             Console.WriteLine("=== Manage Bookings ===");
@@ -149,18 +138,17 @@ namespace AirportSystem.Menus
             switch (choice)
             {
                 case "1":
-                    await HandleCancelBooking(ticketService, currentUser);
+                    await HandleCancelTicket(ticketService, currentUser);
                     Logger.WaitForAnyKey();
                     break;
 
                 case "2":
-                    // TODO: Modify Booking here
+                    await HandleModifyTicket(ticketService, flightService, currentUser);
                     Logger.WaitForAnyKey();
                     break;
 
                 case "3":
-                    // TODO: View personal bookings here
-                    await HandleViewUserBooking(ticketService, currentUser);
+                    await HandleViewUserTicket(ticketService, currentUser);
                     Logger.WaitForAnyKey();
                     break;
 
@@ -172,36 +160,99 @@ namespace AirportSystem.Menus
 
         }
 
-        private static async Task HandleCancelBooking(TicketService ticketService, User currentUser)
+        private static async Task HandleCancelTicket(TicketService ticketService, User currentUser)
         {
             Console.WriteLine("===  Cancel Booking ===");
 
-            List<Ticket> tickets = await ticketService.ViewBookingsByUser(currentUser.Username);
+            List<Ticket> tickets = await ticketService.ViewTicketsByUser(currentUser.Username);
 
             Logger.PrintUserTickets(tickets);
 
 
             int index = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", tickets.Count);
 
-            bool success = await ticketService.CancelBooking(index, currentUser.Username);
-            if (success)
+            bool success = await ticketService.CancelTicket(index, currentUser.Username);
+            if (!success)
             {
-                Logger.PrintMessage("The booking is canceled successfully!", MessageType.Success);
+                Logger.PrintMessage("Something wrong!", MessageType.Error);
                 return;
+
             }
 
-            Logger.PrintMessage("Something wrong!", MessageType.Error);
-            return;
+            Logger.PrintMessage("The booking is canceled successfully!", MessageType.Success);
+
 
         }
 
-        private static async Task HandleViewUserBooking(TicketService ticketService, User currentUser)
+        private static async Task HandleModifyTicket(TicketService ticketService, FlightService flightService, User currentUser)
+        {
+            Console.WriteLine("=== Modify Booking ===");
+
+            List<Ticket> tickets = await ticketService.ViewTicketsByUser(currentUser.Username);
+            Logger.PrintUserTickets(tickets);
+
+            int ticketIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", tickets.Count);
+
+            List<Flight> flights = await flightService.GetUniqueFlights();
+
+            Logger.PrintMessage("Please select one of these flights to change your booking", MessageType.Info);
+            Logger.PrintUniqueFlights(flights);
+
+
+            // int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
+
+
+            string? departureCountry = ConsoleValidator.ReadOptionalString("Please enter the Departure Country: ");
+            string? destinationCountry = ConsoleValidator.ReadOptionalString("Please enter the Destination Country: ");
+            DateTime? departureDate = ConsoleValidator.ReadOptionalDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
+            string? departureAirport = ConsoleValidator.ReadOptionalString("Please enter the Departure Airport: ");
+            string? arrivalAirport = ConsoleValidator.ReadOptionalString("Please enter the Arrival Airport: ");
+            FlightClass? flightClass = ConsoleValidator.ReadOptionalFlightClass(ClassMessage);
+
+            Flight? selectedFlight = await flightService.SelectAvailableFlight(
+                           departureAirport, arrivalAirport, departureCountry, destinationCountry, departureDate, flightClass);
+
+            if (selectedFlight != null)
+            {
+                Console.Clear();
+                Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
+
+                Logger.PrintAllFlights([selectedFlight]);
+
+                bool success = await ticketService.ModifyTicket(ticketIndex,
+                             departureCountry,
+                             destinationCountry,
+                             departureDate,
+                             departureAirport,
+                             arrivalAirport,
+                             flightClass,
+                             currentUser.Username);
+                if (!success)
+                {
+                    Logger.PrintMessage("Ticket not found", MessageType.Error);
+                    return;
+                }
+
+                Logger.PrintMessage("The booking is modified successfully!", MessageType.Success);
+
+            }
+            else
+            {
+                Logger.PrintMessage("No flight matched the selected criteria or class!", MessageType.Error);
+            }
+
+
+
+
+        }
+
+
+        private static async Task HandleViewUserTicket(TicketService ticketService, User currentUser)
         {
             Console.WriteLine($"===  View all bookings for the user [{currentUser.Username}] ===");
 
 
-            List<Ticket> tickets = await ticketService.ViewBookingsByUser(currentUser.Username);
-
+            List<Ticket> tickets = await ticketService.ViewTicketsByUser(currentUser.Username);
 
             if (tickets.Count == 0)
             {
@@ -209,42 +260,6 @@ namespace AirportSystem.Menus
                 return;
             }
             Logger.PrintUserTickets(tickets);
-
-        }
-
-
-
-        private static Flight ReadRequiredValues()
-        {
-            double price = ConsoleValidator.ReadValidDouble("Please enter the price: ");
-            string departureCountry = ConsoleValidator.ReadValidString("Please enter the Departure Country: ");
-            string destinationCountry = ConsoleValidator.ReadValidString("Please enter the Destination Country: ");
-            DateTime departureDate = ConsoleValidator.ReadValidDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
-            string departureAirport = ConsoleValidator.ReadValidString("Please enter the Departure Airport: ");
-            string arrivalAirport = ConsoleValidator.ReadValidString("Please enter the Arrival Airport: ");
-            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
-
-            Flight flight = new(departureCountry, destinationCountry, departureDate,
-                       departureAirport, arrivalAirport, price, flightClass);
-
-            return flight;
-
-        }
-
-        private static Flight ReadOptionalValues()
-        {
-            double price = ConsoleValidator.ReadValidDouble("Please enter the price: ");
-            string departureCountry = ConsoleValidator.ReadValidString("Please enter the Departure Country: ");
-            string destinationCountry = ConsoleValidator.ReadValidString("Please enter the Destination Country: ");
-            DateTime departureDate = ConsoleValidator.ReadValidDate("Please enter the Departure Date in this format [YYYY-MM-DD]: ");
-            string departureAirport = ConsoleValidator.ReadValidString("Please enter the Departure Airport: ");
-            string arrivalAirport = ConsoleValidator.ReadValidString("Please enter the Arrival Airport: ");
-            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
-
-            Flight flight = new(departureCountry, destinationCountry, departureDate,
-                       departureAirport, arrivalAirport, price, flightClass);
-
-            return flight;
 
         }
 

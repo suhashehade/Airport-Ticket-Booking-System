@@ -92,11 +92,11 @@ namespace AirportSystem.Menus
             if (departureCountry != null) filters.Add(ticket => ticket.Flight!.DepartureCountry == departureCountry);
             if (destinationCountry != null) filters.Add(ticket => ticket.Flight!.DestinationCountry == destinationCountry);
             if (flightClass != null) filters.Add(ticket => ticket.Flight!.Class == flightClass);
-            if (price != null) filters.Add(ticket => Math.Abs(ticket.Flight!.Price - price.Value) < 0.01);
+            if (price != null) filters.Add(ticket => ticket.Flight!.Price == price);
 
 
 
-            List<Ticket> filteredTickets = await ticketService.FilterBooking(filters);
+            List<Ticket> filteredTickets = await ticketService.FilterTickets(filters);
 
             if (filteredTickets.Count == 0)
             {

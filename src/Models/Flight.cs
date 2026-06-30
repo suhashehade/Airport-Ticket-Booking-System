@@ -5,8 +5,8 @@ namespace AirportSystem.Models
 {
     public class Flight
     {
-        public FlightClass Class { get; set; }
-        public double Price { get; set; }
+        public FlightClass? Class { get; set; }
+        public double? Price { get; set; }
         public string? DepartureCountry { get; set; }
         public string? DestinationCountry { get; set; }
         public DateTime? DepartureDate { get; set; }

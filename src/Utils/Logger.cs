@@ -24,23 +24,38 @@ namespace AirportSystem.Utils
             Console.ResetColor();
         }
 
-        public static void PrintUniqueFlightsHeader()
+        public static void PrintUniqueFlights(List<Flight> flights)
         {
-            Console.WriteLine("{0,-18} {1,-15} {2,-20} {3,-20} {4,-15}", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
-            Console.WriteLine(new string('-', 90));
+            Console.WriteLine();
+            Console.WriteLine("{0,-10} {1,-18} {2,-15} {3,-20} {4,-20} {5,-15}", "#", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
+            Console.WriteLine(new string('-', 100));
+            int index = 0;
+            foreach (Flight flight in flights)
+            {
+                index++;
+                string row = string.Format("{0,-10} {1,-18} {2,-15} {3,-20} {4,-20} {5,-15}",
+                 index, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
+                PrintMessage(row, MessageType.Info);
+            }
+
         }
 
-        public static void PrintFullFlightHeader()
+        public static void PrintAllFlights(List<Flight> flights)
         {
-            Console.WriteLine("{0,-12} {1,-10} {2,-18} {3,-15} {4,-20} {5,-20} {6,-15}", "Class", "Price", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
-            Console.WriteLine(new string('-', 115));
+            Console.WriteLine();
+            Console.WriteLine("{0,-10} {1,-12} {2,-10} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}", "#", "Class", "Price", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
+            Console.WriteLine(new string('-', 130));
+            int index = 0;
+            foreach (Flight flight in flights)
+            {
+                index++;
+                string row = string.Format("{0,-10} {1,-12} {2,-10} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}",
+                 index, flight.Class, flight.Price, flight.DepartureAirport, flight.ArrivalAirport, flight.DepartureCountry, flight.DestinationCountry, flight.DepartureDate?.ToString(DateFormat));
+                PrintMessage(row, MessageType.Info);
+            }
         }
 
-        public static void PrintFullTicketHeader()
-        {
-            Console.WriteLine("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}", "#", "Passenger name", "Price", "Class", "Dep Airport", "Arr Airport", "Dep Country", "Dest Country", "Dep Date");
-            Console.WriteLine(new string('-', 140));
-        }
+
 
         public static void PrintAllTickets(List<Ticket> tickets)
         {
@@ -53,7 +68,7 @@ namespace AirportSystem.Utils
                 index++;
                 string row = string.Format("{0,-10} {1,-20} {2,-10} {3,-12} {4,-18} {5,-15} {6,-20} {7,-20} {8,-15}",
                    index, t.PassengerUsername, t.Flight!.Price, t.Flight.Class, t.Flight.DepartureAirport, t.Flight.ArrivalAirport, t.Flight.DepartureCountry, t.Flight.DestinationCountry, t.Flight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(row, MessageType.Info);
+                PrintMessage(row, MessageType.Info);
             }
 
         }
@@ -69,7 +84,7 @@ namespace AirportSystem.Utils
                 index++;
                 string row = string.Format("{0,-10} {1,-10} {2,-12} {3,-18} {4,-15} {5,-20} {6,-20} {7,-15}",
                    index, t.Flight!.Price, t.Flight.Class, t.Flight.DepartureAirport, t.Flight.ArrivalAirport, t.Flight.DepartureCountry, t.Flight.DestinationCountry, t.Flight.DepartureDate?.ToString(DateFormat));
-                Logger.PrintMessage(row, MessageType.Info);
+                PrintMessage(row, MessageType.Info);
             }
 
         }

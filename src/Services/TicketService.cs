@@ -1,5 +1,7 @@
 using AirportSystem.Models;
 using AirportSystem.Data;
+using static AirportSystem.Enums.AppEnums;
+using System.Text.Json;
 
 
 namespace AirportSystem.Services
@@ -42,7 +44,7 @@ namespace AirportSystem.Services
         }
 
 
-        public async Task<List<Ticket>> FilterBooking(List<Func<Ticket, bool>> filters)
+        public async Task<List<Ticket>> FilterTickets(List<Func<Ticket, bool>> filters)
         {
             List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
 
@@ -51,7 +53,7 @@ namespace AirportSystem.Services
         }
 
 
-        public async Task<List<Ticket>> ViewBookingsByUser(string username)
+        public async Task<List<Ticket>> ViewTicketsByUser(string username)
         {
             List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
             var result = existingTickets.Where(ex => ex.PassengerUsername == username)
@@ -65,7 +67,7 @@ namespace AirportSystem.Services
 
         public async Task<Ticket?> GetByIndexByUser(int index, string username)
         {
-            List<Ticket> existingTickets = await ViewBookingsByUser(username);
+            List<Ticket> existingTickets = await ViewTicketsByUser(username);
             if (index < 0)
             {
                 return null;
@@ -74,13 +76,10 @@ namespace AirportSystem.Services
             Ticket ticket = existingTickets.ElementAt(index);
             return ticket;
         }
-        public async Task<bool> CancelBooking(int index, string username)
+
+        public async Task<bool> CancelTicket(int index, string username)
         {
             List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
-            if (index < 0)
-            {
-                return false;
-            }
 
             Ticket? ticket = await GetByIndexByUser(index - 1, username);
 
@@ -94,7 +93,39 @@ namespace AirportSystem.Services
 
         }
 
+        public async Task<bool> ModifyTicket(int index, string? departureCountry, string? destinationCountry,
+                DateTime? departureDate,
+                string? departureAirport,
+                string? arrivalAirport,
+                FlightClass? flightClass,
+                string username
+            )
+        {
+            List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
 
+            Ticket? oldTicket = await GetByIndexByUser(index - 1, username);
+            if (oldTicket != null)
+            {
+
+                Ticket? ticketToModify = existingTickets.FirstOrDefault(et => et.TicketId == oldTicket?.TicketId);
+                if (ticketToModify?.Flight != null)
+                {
+                    if (departureCountry != null) ticketToModify?.Flight?.DepartureCountry = departureCountry;
+                    if (destinationCountry != null) ticketToModify?.Flight?.DestinationCountry = destinationCountry;
+                    if (departureDate != null) ticketToModify?.Flight?.DepartureDate = departureDate;
+                    if (departureAirport != null) ticketToModify?.Flight?.DepartureAirport = departureAirport;
+                    if (arrivalAirport != null) ticketToModify?.Flight?.ArrivalAirport = arrivalAirport;
+                    if (flightClass != null) ticketToModify?.Flight?.Class = flightClass;
+
+                    await _fileContext.Write(existingTickets);
+                    return true;
+                }
+
+
+            }
+            return false;
+
+        }
 
 
     }
