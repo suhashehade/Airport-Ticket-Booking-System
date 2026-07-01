@@ -52,36 +52,27 @@ namespace AirportSystem.Menus
         private static async Task HandleBookFlight(FlightService flightService, User currentUser, TicketService ticketService)
         {
             Console.Clear();
-            List<Flight> flights = await flightService.GetUniqueFlights();
-
-            Logger.PrintMessage("Please select one of these flights", MessageType.Info);
-            Logger.PrintUniqueFlights(flights);
-            Console.WriteLine();
-
-            int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
             FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
-
-
+            List<Flight> flights = await flightService.GetUniqueFlights(flightClass);
+            Logger.PrintUniqueFlights(flights);
+            int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
             Flight? selectedFlight = await flightService.SelectAvailableFlight(flightIndex, flightClass);
+
 
             if (selectedFlight != null)
             {
-                // var options = new JsonSerializerOptions { WriteIndented = true };
-                // Console.Clear();
-                // Console.WriteLine($"This is the selected flight: {JsonSerializer.Serialize(selectedFlight, options)} at index: {flightIndex}");
+                Console.Clear();
+                Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
+                Logger.PrintAllFlights([selectedFlight]);
 
-                // Logger.PrintMessage("--- Selected Flight Details ---", MessageType.Info);
-
-                // Logger.PrintAllFlights([selectedFlight]);
-
-                // Ticket ticket = new(currentUser!, selectedFlight);
-                // bool success = await ticketService.BookFlight(ticket);
-                // if (success)
-                // {
-                //     Logger.PrintMessage($"Successfully processed tickets.", MessageType.Success);
-                //     return;
-                // }
-                // Logger.PrintMessage("This ticket already exists!", MessageType.Warning);
+                Ticket ticket = new(currentUser!, selectedFlight);
+                bool success = await ticketService.BookFlight(ticket);
+                if (success)
+                {
+                    Logger.PrintMessage($"Successfully processed tickets.", MessageType.Success);
+                    return;
+                }
+                Logger.PrintMessage("This ticket already exists!", MessageType.Warning);
 
             }
             else
@@ -199,14 +190,10 @@ namespace AirportSystem.Menus
 
             int ticketIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", tickets.Count);
 
-            List<Flight> flights = await flightService.GetUniqueFlights();
-
-            Logger.PrintMessage("Please select one of these flights to change your booking", MessageType.Default);
+            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
+            List<Flight> flights = await flightService.GetUniqueFlights(flightClass);
             Logger.PrintUniqueFlights(flights);
-
             int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
-            FlightClass? flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
-
             Flight? selectedFlight = await flightService.SelectAvailableFlight(flightIndex, flightClass);
 
             if (selectedFlight != null)

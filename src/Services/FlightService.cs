@@ -122,12 +122,12 @@ namespace AirportSystem.Services
             }
         }
 
-        public async Task<List<Flight>> GetUniqueFlights()
+        public async Task<List<Flight>> GetUniqueFlights(FlightClass? flightClass = null)
         {
             List<Flight> existingFlights = await _fileContext.Read<Flight>();
 
             var uniqueFlights = existingFlights
-                .Where(f => f.IsAvailable)
+                .Where(f => f.IsAvailable && (flightClass == null || f.Class == flightClass))
                 .GroupBy(f => new { f.DepartureCountry, f.DestinationCountry, f.DepartureDate, f.ArrivalAirport, f.DepartureAirport })
                 .Select(g => g.First())
                 .ToList();
@@ -151,13 +151,9 @@ namespace AirportSystem.Services
 
         public async Task<Flight?> SelectAvailableFlight(int index, FlightClass? flightClass)
         {
-            List<Flight> uniqueFlights = await GetUniqueFlights();
-            // Flight flight =
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            Console.WriteLine($"This is the flights: {JsonSerializer.Serialize(uniqueFlights, options)}");
-            var filtered = uniqueFlights.Where(f => f.Class == flightClass).ToList();
-            Console.WriteLine($"This is the flights filtered by class: {JsonSerializer.Serialize(filtered, options)}");
-            return filtered.ElementAt(index - 1);
+            List<Flight> uniqueFlights = await GetUniqueFlights(flightClass);
+
+            return uniqueFlights.ElementAt(index - 1);
         }
 
 
