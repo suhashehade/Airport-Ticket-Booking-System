@@ -4,6 +4,7 @@ using AirportSystem.Utils;
 using AirportSystem.Validators;
 using static AirportSystem.Enums.AppEnums;
 using static AirportSystem.Constants.AppConstants;
+using static AirportSystem.Validators.FlightModelInfo;
 
 
 namespace AirportSystem.Menus
@@ -37,8 +38,13 @@ namespace AirportSystem.Menus
                         Console.WriteLine("\nProcessing file, please wait...");
                         Console.ReadKey();
                         break;
-
                     case "3":
+                        Console.Clear();
+                        PrintModelInfo();
+                        Console.WriteLine("\nProcessing file, please wait...");
+                        Console.ReadKey();
+                        break;
+                    case "4":
                         isRunning = false;
                         Console.WriteLine("\nLogging out...");
                         break;
@@ -69,6 +75,8 @@ namespace AirportSystem.Menus
             }
 
         }
+
+
 
 
         private static async Task HandleFilterTickets(TicketService ticketService)
@@ -107,5 +115,7 @@ namespace AirportSystem.Menus
             Logger.PrintAllTickets(filteredTickets);
 
         }
+
+
     }
 }

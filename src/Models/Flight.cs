@@ -1,17 +1,36 @@
 
+using System.ComponentModel.DataAnnotations;
+using AirportSystem.Validators.Attributes;
 using static AirportSystem.Enums.AppEnums;
 
 namespace AirportSystem.Models
 {
     public class Flight
     {
+        [Required]
+        [ValidEnum]
         public FlightClass? Class { get; set; }
+
+        [Required]
+        [Positive]
         public double? Price { get; set; }
+
+        [Required]
         public string? DepartureCountry { get; set; }
+
+        [Required]
         public string? DestinationCountry { get; set; }
+
+        [Required]
+        [FutureDate]
         public DateTime? DepartureDate { get; set; }
+
+        [Required]
         public string? DepartureAirport { get; set; }
+
+        [Required]
         public string? ArrivalAirport { get; set; }
+
         public bool IsAvailable { get; set; }
 
         public Flight() { }

@@ -115,7 +115,8 @@ namespace AirportSystem.Utils
             Console.WriteLine("----------------------------------------");
             Console.WriteLine("1. View Filtered Booked Tickets");
             Console.WriteLine("2. Import Flights from CSV");
-            Console.WriteLine("3. Logout / Exit");
+            Console.WriteLine("3. View Flight Model Validation Details");
+            Console.WriteLine("4. Logout / Exit");
             Console.WriteLine("----------------------------------------");
         }
 
