@@ -19,13 +19,7 @@ namespace AirportSystem.Services
 
         public static bool IsExists(List<Ticket> tickets, Ticket ticket)
         {
-            bool isExists = tickets.Any(et => et.TicketId == ticket.TicketId);
-
-            if (isExists)
-            {
-                return true;
-            }
-            return false;
+            return tickets.Any(et => et.TicketId == ticket.TicketId);
         }
 
         public async Task<bool> BookFlight(Ticket ticket)
@@ -56,11 +50,7 @@ namespace AirportSystem.Services
         public async Task<List<Ticket>> ViewTicketsByUser(string username)
         {
             List<Ticket> existingTickets = await _fileContext.Read<Ticket>();
-            var result = existingTickets.Where(ex => ex.PassengerUsername == username)
-                                         .GroupBy(ex => new { ex.TicketId, ex.PassengerUsername, ex.Flight })
-                                         .Select(g => g.First())
-                                         .ToList();
-
+            var result = existingTickets.Where(ex => ex.PassengerUsername == username).ToList();
             return result.ToList();
 
         }

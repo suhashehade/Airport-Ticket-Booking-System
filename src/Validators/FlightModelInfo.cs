@@ -32,7 +32,7 @@ namespace AirportSystem.Validators
                         "RequiredAttribute" => $"Required",
                         "PositiveAttribute" => $"Must be positive",
                         "FutureDateAttribute" => $"Allowed Range (today → future)",
-                        _ when propType.IsEnum => $"Must be a FlightClass",
+                        "ValidEnumAttribute" => "Must be a FlightClass",
                         _ => ""
                     };
                     constraints += constraints.Length != 0 ? $", {constraint}" : constraint;

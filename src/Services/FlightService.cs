@@ -32,7 +32,7 @@ namespace AirportSystem.Services
             {
 
                 var lines = await File.ReadAllLinesAsync(filePath);
-               
+
                 if (lines.Length <= 1)
                 {
                     Logger.PrintMessage("Warning: The CSV file is empty or only contains headers.", MessageType.Warning);
@@ -119,20 +119,6 @@ namespace AirportSystem.Services
                 Logger.PrintMessage($"An error occurred while reading the CSV: {ex.Message}", MessageType.Error);
                 return false;
             }
-        }
-
-
-        public async Task<List<Flight>> DisplayAvailableFlights()
-        {
-            List<Flight> existingFlights = await _fileContext.Read<Flight>();
-
-            var flights = existingFlights
-                .Where(f => f.IsAvailable)
-                .GroupBy(f => new { f.DepartureCountry, f.DestinationCountry, f.DepartureDate })
-                .Select(g => g.First())
-                .ToList();
-
-            return flights;
         }
 
         public async Task<List<Flight>> GetUniqueFlights()
