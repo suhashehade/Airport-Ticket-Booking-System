@@ -131,7 +131,7 @@ namespace AirportSystem.Menus
         {
             Console.Clear();
             Console.WriteLine("=== Manage Bookings ===");
-            Logger.PrintManageFlightMenu();
+            Logger.PrintPassenegerFlightMenu();
 
             string choice = ConsoleValidator.ReadValidString("Select an option: ");
 

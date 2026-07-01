@@ -102,6 +102,7 @@ namespace AirportSystem.Utils
             Console.WriteLine("    Welcome to Airport Booking System   ");
             Console.WriteLine("========================================");
         }
+
         public static void PrintWelcomeUser(string name, UserRole role)
         {
             Console.Clear();
@@ -131,7 +132,7 @@ namespace AirportSystem.Utils
             Console.WriteLine("----------------------------------------");
         }
 
-        public static void PrintManageFlightMenu()
+        public static void PrintPassenegerFlightMenu()
         {
             Console.WriteLine("----------------------------------------");
             Console.WriteLine("1. Cancel Booking");
