@@ -28,21 +28,18 @@ namespace AirportSystem.Menus
                     case "1":
                         Console.Clear();
                         await HandleFilterTickets(ticketService);
-                        Console.WriteLine("\nProcessing file, please wait...");
-                        Console.ReadKey();
+                        Logger.WaitForAnyKey();
                         break;
 
                     case "2":
                         Console.Clear();
                         await HandleReadFromCSV(flightService);
-                        Console.WriteLine("\nProcessing file, please wait...");
-                        Console.ReadKey();
+                        Logger.WaitForAnyKey();
                         break;
                     case "3":
                         Console.Clear();
                         PrintModelInfo();
-                        Console.WriteLine("\nProcessing file, please wait...");
-                        Console.ReadKey();
+                        Logger.WaitForAnyKey();
                         break;
                     case "4":
                         isRunning = false;

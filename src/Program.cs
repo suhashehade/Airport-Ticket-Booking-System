@@ -19,34 +19,36 @@ class Program
     private static User? currentUser;
     static async Task Main(string[] args)
     {
-        Logger.PrintWelcome();
-
-        string username = ReadValidString("Enter Username: ").Trim();
-        string password = ReadValidString("Enter Password: ").Trim();
-
-        currentUser = _authService.Login(username, password);
-        Console.Clear();
-
-        if (currentUser != null)
+        while (true)
         {
-            switch (currentUser.Role)
+            Console.Clear();
+            Logger.PrintWelcome();
+
+            string username = ReadValidString("Enter Username: ").Trim();
+            string password = ReadValidString("Enter Password: ").Trim();
+
+            currentUser = _authService.Login(username, password);
+            Console.Clear();
+
+            if (currentUser != null)
             {
-                case UserRole.Manager:
-                    await ShowManagerMenu(_flightService, _ticketService, currentUser);
-                    break;
+                switch (currentUser.Role)
+                {
+                    case UserRole.Manager:
+                        await ShowManagerMenu(_flightService, _ticketService, currentUser);
+                        break;
 
-                case UserRole.Passenger:
-                    await ShowPassengerMenu(_flightService, _ticketService, currentUser);
-                    break;
+                    case UserRole.Passenger:
+                        await ShowPassengerMenu(_flightService, _ticketService, currentUser);
+                        break;
+                }
             }
-        }
-        else
-        {
-            Logger.PrintMessage("Invalid username or password. Access Denied!", MessageType.Error);
-        }
+            else
+            {
+                Logger.PrintMessage("Invalid username or password. Access Denied!", MessageType.Error);
+            }
 
-        Console.WriteLine("\nPress any key to exit...");
-        Console.ReadKey();
+        }
     }
 
 
