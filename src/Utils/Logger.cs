@@ -102,6 +102,7 @@ namespace AirportSystem.Utils
             Console.WriteLine("    Welcome to Airport Booking System   ");
             Console.WriteLine("========================================");
         }
+
         public static void PrintWelcomeUser(string name, UserRole role)
         {
             Console.Clear();
@@ -115,7 +116,8 @@ namespace AirportSystem.Utils
             Console.WriteLine("----------------------------------------");
             Console.WriteLine("1. View Filtered Booked Tickets");
             Console.WriteLine("2. Import Flights from CSV");
-            Console.WriteLine("3. Logout / Exit");
+            Console.WriteLine("3. View Flight Model Validation Details");
+            Console.WriteLine("4. Logout / Exit");
             Console.WriteLine("----------------------------------------");
         }
 
@@ -130,7 +132,7 @@ namespace AirportSystem.Utils
             Console.WriteLine("----------------------------------------");
         }
 
-        public static void PrintManageFlightMenu()
+        public static void PrintPassenegerFlightMenu()
         {
             Console.WriteLine("----------------------------------------");
             Console.WriteLine("1. Cancel Booking");

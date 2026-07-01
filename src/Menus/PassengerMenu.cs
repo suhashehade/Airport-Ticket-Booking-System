@@ -35,10 +35,10 @@ namespace AirportSystem.Menus
 
                     case "3":
                         await HandleManageBookFlight(ticketService, flightService, currentUser);
-                        Logger.WaitForAnyKey();
                         break;
                     case "4":
-                        Logger.WaitForAnyKey();
+                        isRunning = false;
+                        Console.WriteLine("\nLogging out...");
                         break;
 
                     default:
@@ -131,31 +131,37 @@ namespace AirportSystem.Menus
         {
             Console.Clear();
             Console.WriteLine("=== Manage Bookings ===");
-            Logger.PrintManageFlightMenu();
+            Logger.PrintPassenegerFlightMenu();
 
             string choice = ConsoleValidator.ReadValidString("Select an option: ");
-
-            switch (choice)
+            bool isRunning = true;
+            while (isRunning)
             {
-                case "1":
-                    await HandleCancelTicket(ticketService, currentUser);
-                    Logger.WaitForAnyKey();
-                    break;
+                switch (choice)
+                {
+                    case "1":
+                        await HandleCancelTicket(ticketService, currentUser);
+                        Logger.WaitForAnyKey();
+                        break;
 
-                case "2":
-                    await HandleModifyTicket(ticketService, flightService, currentUser);
-                    Logger.WaitForAnyKey();
-                    break;
+                    case "2":
+                        await HandleModifyTicket(ticketService, flightService, currentUser);
+                        Logger.WaitForAnyKey();
+                        break;
 
-                case "3":
-                    await HandleViewUserTicket(ticketService, currentUser);
-                    Logger.WaitForAnyKey();
-                    break;
+                    case "3":
+                        await HandleViewUserTicket(ticketService, currentUser);
+                        Logger.WaitForAnyKey();
+                        break;
+                    case "4":
+                        isRunning = false;
+                        break;
 
-                default:
-                    Console.WriteLine("\nInvalid option!");
-                    Logger.WaitForAnyKey();
-                    break;
+                    default:
+                        Console.WriteLine("\nInvalid option!");
+                        Logger.WaitForAnyKey();
+                        break;
+                }
             }
 
         }
