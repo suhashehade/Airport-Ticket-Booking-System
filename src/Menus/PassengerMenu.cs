@@ -52,10 +52,10 @@ namespace AirportSystem.Menus
         private static async Task HandleBookFlight(FlightService flightService, User currentUser, TicketService ticketService)
         {
             Console.Clear();
-            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
-            List<Flight> flights = await flightService.GetUniqueFlights(flightClass);
+            List<Flight> flights = await flightService.GetUniqueFlights();
             Logger.PrintUniqueFlights(flights);
             int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
+            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
             Flight? selectedFlight = await flightService.SelectAvailableFlight(flightIndex, flightClass);
 
 
@@ -190,12 +190,13 @@ namespace AirportSystem.Menus
 
             int ticketIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", tickets.Count);
 
-            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
-            List<Flight> flights = await flightService.GetUniqueFlights(flightClass);
+            List<Flight> flights = await flightService.GetUniqueFlights();
             Logger.PrintUniqueFlights(flights);
             int flightIndex = ConsoleValidator.ReadValidIntRange("Enter the row's number: ", flights.Count);
+            FlightClass flightClass = ConsoleValidator.ReadValidFlightClass(ClassMessage);
             Flight? selectedFlight = await flightService.SelectAvailableFlight(flightIndex, flightClass);
-
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            Console.WriteLine($"The flights: {JsonSerializer.Serialize(flights, options)}");
             if (selectedFlight != null)
             {
                 Console.Clear();

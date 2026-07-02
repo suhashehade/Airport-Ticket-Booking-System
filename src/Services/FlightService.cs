@@ -151,9 +151,18 @@ namespace AirportSystem.Services
 
         public async Task<Flight?> SelectAvailableFlight(int index, FlightClass? flightClass)
         {
-            List<Flight> uniqueFlights = await GetUniqueFlights(flightClass);
+            List<Flight> uniqueFlights = await GetUniqueFlights();
+            Flight selected = uniqueFlights.ElementAt(index - 1);
 
-            return uniqueFlights.ElementAt(index - 1);
+            List<Flight> allFlights = await _fileContext.Read<Flight>();
+            return allFlights.FirstOrDefault(f =>
+                f.DepartureCountry == selected.DepartureCountry &&
+                f.DestinationCountry == selected.DestinationCountry &&
+                f.DepartureAirport == selected.DepartureAirport &&
+                f.ArrivalAirport == selected.ArrivalAirport &&
+                f.DepartureDate?.Date == selected.DepartureDate?.Date &&
+                f.Class == flightClass &&
+                f.IsAvailable);
         }
 
 
